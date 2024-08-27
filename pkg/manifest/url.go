@@ -13,17 +13,13 @@ import (
 const url_folder_name string = "url"
 
 type UrlDependancy struct {
-	Name     string `yaml:"name"`
-	Location string `yaml:"location"`
-	Version  string `yaml:"version"`
-}
-
-func (u *UrlDependancy) GetName() string {
-	return u.Name
+	Name    string `yaml:"name"`
+	Path    string `yaml:"path"`
+	Version string `yaml:"version"`
 }
 
 func (u *UrlDependancy) Download(folderPath string) (err error) {
-	res, err := http.Get(string(u.Location))
+	res, err := http.Get(string(u.Path))
 	if err != nil {
 		return err
 	}

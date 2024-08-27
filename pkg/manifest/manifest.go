@@ -3,15 +3,10 @@ package manifest
 type Manifest struct {
 	Name         string       `yaml:"name"`
 	Version      string       `yaml:"version"`
-	Dependancies Dependancies `mapstructure:"dependancies"`
+	Dependencies Dependencies `mapstructure:"dependencies"`
 }
 
-type Dependancies struct {
-	GitDependancies []GitDependancy `mapstructure:"git"`
-	UrlDependancies []UrlDependancy `mapstructure:"url"`
-}
-
-type Dependancy interface {
-	GetName() string
-	Download(folderPath string) error
+type Dependencies struct {
+	GitDependencies []GitDependancy `mapstructure:"git"`
+	UrlDependencies []UrlDependancy `mapstructure:"url"`
 }

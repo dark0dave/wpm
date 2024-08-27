@@ -7,6 +7,7 @@ import (
 
 	"github.com/dark0dave/wpm/pkg/manifest"
 	"github.com/fatih/color"
+	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -50,7 +51,7 @@ func colorize() {
 		`Available Commands:`, `{{StyleHeading "Available Commands:"}}`,
 		`Global Flags:`, `{{StyleHeading "Global Flags:"}}`,
 		// The following one steps on "Global Flags:"
-		//`Flags:`, `{{StyleHeading "Flags:"}}`,
+		// `Flags:`, `{{StyleHeading "Flags:"}}`,
 	).Replace(rootCmd.UsageTemplate())
 	re := regexp.MustCompile(`(?m)^Flags:\s*$`)
 	usageTemplate = re.ReplaceAllLiteralString(usageTemplate, `{{StyleHeading "Flags:"}}`)
@@ -64,6 +65,10 @@ func Execute() {
 		log.Error().AnErr("Failed with", err)
 		os.Exit(1)
 	}
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		log.Debug().Msgf("Config file changed: %+v", e)
+	})
+	viper.WatchConfig()
 	if err := rootCmd.Execute(); err != nil {
 		log.Error().AnErr("Failed", err)
 		os.Exit(1)

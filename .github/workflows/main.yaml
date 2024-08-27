@@ -91,7 +91,7 @@ jobs:
           config: cliff.toml
           args: --latest -u --verbose
         env:
-          OUTPUT: CHANGELOG.md
+          OUTPUT: changelog.md
       - name: Print the changelog
         run: cat "${{ steps.git-cliff.outputs.changelog }}"
       - name: Get the tag
@@ -105,7 +105,7 @@ jobs:
         with:
           tag_name: ${{ steps.get_tag.outputs.git_tag }}
           release_name: ${{ steps.get_tag.outputs.git_tag }}
-          body_path: CHANGELOG.md
+          body_path: ./changelog.md
           draft: ${{ startsWith(steps.get_tag.outputs.git_tag, 'nightly') != true }}
           prerelease: ${{ startsWith(steps.get_tag.outputs.git_tag, 'nightly') }}
   push-image:

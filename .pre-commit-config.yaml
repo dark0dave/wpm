@@ -40,4 +40,3 @@ repos:
         files: ".*go"
         pass_filenames: false
         stages: [pre-commit]
-

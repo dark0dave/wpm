@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -12,11 +11,11 @@ var (
 		Short:   "Add dependencies",
 		Long:    `Add dependencies to a manifest file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			log.Debug().Msg("Added!")
+			cmd.Help()
 		},
 	}
 )
 
 func init() {
-	addCmd.AddCommand(installCmd)
+	rootCmd.AddCommand(addCmd)
 }
