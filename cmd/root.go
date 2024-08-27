@@ -18,7 +18,8 @@ const FolderPath string = "weidu_modules"
 
 var (
 	m       manifest.Manifest
-	rootCmd = &cobra.Command{
+	workers int = 2
+	rootCmd     = &cobra.Command{
 		Use:   "wpm",
 		Short: "wpm is a weidu package manager",
 		Long:  `A Fast and Flexible Package Manager, designed to help wiedu modders share code.`,
@@ -56,6 +57,7 @@ func colorize() {
 	re := regexp.MustCompile(`(?m)^Flags:\s*$`)
 	usageTemplate = re.ReplaceAllLiteralString(usageTemplate, `{{StyleHeading "Flags:"}}`)
 	usageTemplate = re.ReplaceAllLiteralString(usageTemplate, `{{CyanStyleHeading}}`)
+	rootCmd.PersistentFlags().IntVarP(&workers, "workers", "w", workers, "Number of works for wpm")
 	rootCmd.SetUsageTemplate(usageTemplate)
 }
 
