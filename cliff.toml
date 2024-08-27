@@ -7,8 +7,6 @@ repo = "wpm"
 # template for the changelog body
 # https://tera.netlify.app/docs
 body = """\
-**Docker Image**: {{ get_env(name='REGISTRY', default='') }}/{{ get_env(name='IMAG_NAME', default='') }}:{{ get_env(name='GITHUB_REF_NAME', default='') }}
-
 ### Changelog
 {% for group, commits in commits | group_by(attribute="group") %}
     \n#### {{ group | striptags | trim | upper_first }}:
@@ -16,7 +14,7 @@ body = """\
     | filter(attribute="group")
     | sort(attribute="scope") %}
         - {{commit.scope}}: \
-            {{ commit.message }} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/dark0dave/woven_server/commit/{{ commit.id }}) by [{{ commit.author.name }}](https://github.com/{{ commit.author.name }}))
+            {{ commit.message }} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/dark0dave/wpm/commit/{{ commit.id }}) by [{{ commit.author.name }}](https://github.com/{{ commit.author.name }}))
     {%- endfor -%}
 {% endfor %}
 """
