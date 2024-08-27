@@ -5,30 +5,41 @@ repos:
     hooks:
       - id: check-json
         stages: [pre-commit]
+        require_serial: false
+      - id: check-yaml
+        stages: [pre-commit]
+        require_serial: false
       - id: check-added-large-files
         stages: [pre-commit]
+        require_serial: false
       - id: trailing-whitespace
         stages: [pre-commit]
+        require_serial: false
       - id: end-of-file-fixer
         stages: [pre-commit]
+        require_serial: false
         exclude_types: [ svg ]
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
     hooks:
       - id: forbid-binary
         stages: [pre-commit]
+        require_serial: false
       - id: git-dirty
         stages: [pre-commit]
+        require_serial: false
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
       - id: codespell
         stages: [pre-commit]
+        require_serial: false
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.27.0
+    rev: v3.29.0
     hooks:
       - id: commitizen
         stages: [commit-msg]
+        require_serial: false
   - repo: local
     hooks:
       - id: go fmt
@@ -39,4 +50,13 @@ repos:
         language: system
         files: ".*go"
         pass_filenames: false
+        require_serial: false
+      - id: go build
         stages: [pre-commit]
+        name: go build
+        description: Build
+        entry: go build -o . .
+        language: system
+        files: ".*go"
+        pass_filenames: false
+        require_serial: false

@@ -5,6 +5,7 @@
 [![](https://img.shields.io/badge/mac%20os-grey?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/dark0dave/wpm/releases/latest)
 [![](https://img.shields.io/github/actions/workflow/status/dark0dave/wpm/main.yaml?style=for-the-badge)](https://github.com/dark0dave/wpm/actions/workflows/main.yaml)
 [![](https://img.shields.io/github/license/dark0dave/wpm?style=for-the-badge)](./LICENSE)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&style=for-the-badge)](https://github.com/pre-commit/pre-commit)
 ```sh
 A Fast and Flexible Package Manager, designed to help wiedu modders share code.
 
