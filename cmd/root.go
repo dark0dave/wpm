@@ -37,7 +37,7 @@ func loadManifestFile() (err error) {
 		return err
 	}
 	if err := viper.Unmarshal(&m); err != nil {
-		log.Error().AnErr("Failed to parse config file, either wpm.yaml does not exist or fails to conform to expect structure", err)
+		log.Error().Msgf("Failed to parse config file, either wpm.yaml does not exist or fails to conform to expect structure: %+v", err)
 		return err
 	}
 	return nil
@@ -64,7 +64,7 @@ func colorize() {
 func Execute() {
 	colorize()
 	if err := loadManifestFile(); err != nil {
-		log.Error().AnErr("Failed with", err)
+		log.Error().Msgf("%+v", err)
 		os.Exit(1)
 	}
 	viper.OnConfigChange(func(e fsnotify.Event) {
@@ -72,7 +72,7 @@ func Execute() {
 	})
 	viper.WatchConfig()
 	if err := rootCmd.Execute(); err != nil {
-		log.Error().AnErr("Failed", err)
+		log.Error().Msgf("Failed with: %+v", err)
 		os.Exit(1)
 	}
 }

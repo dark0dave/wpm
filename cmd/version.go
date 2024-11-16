@@ -54,7 +54,7 @@ var versionCmd = &cobra.Command{
 	Long:    `Detailed information about the version`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if msg, err := infoMessage(); err != nil {
-			log.Error().AnErr("Failed to print message", err)
+			log.Error().Msgf("Failed to print message", err)
 		} else {
 			log.Info().Msg(msg)
 		}
