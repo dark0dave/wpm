@@ -23,7 +23,7 @@ from wpm.yaml file to the weidu_modules folder`,
 					go func() {
 						defer wg.Done()
 						if err := dep.Download(FolderPath); err != nil {
-							log.Error().Msgf("Failed to install", err)
+							log.Error().Msgf("Failed to install, %s", err)
 						}
 					}()
 				}
@@ -34,7 +34,7 @@ from wpm.yaml file to the weidu_modules folder`,
 					go func() {
 						defer wg.Done()
 						if err := dep.Download(FolderPath); err != nil {
-							log.Error().Msgf("Failed to install", err)
+							log.Error().Msgf("Failed to install, %s", err)
 						}
 					}()
 				}

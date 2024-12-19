@@ -32,7 +32,7 @@ var (
 			}
 			viper.Set("dependencies.url", append(m.Dependencies.UrlDependencies, urlDependency))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
-				log.Error().Msgf("Failed to write to config", err)
+				log.Error().Msgf("Failed to write to config, %s", err)
 			}
 			log.Debug().Msgf("Written new config: %+v", viper.Get("dependencies.url"))
 		},
@@ -56,7 +56,7 @@ var (
 				}
 			}
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
-				log.Error().Msgf("Failed to write to config", err)
+				log.Error().Msgf("Failed to write to config, %s", err)
 			}
 			log.Debug().Msgf("Written new config %+v", viper.Get("dependencies.url"))
 		},
