@@ -34,7 +34,7 @@ var (
 			viper.Set("dependencies.git", append(m.Dependencies.GitDependencies, gitDependency))
 			log.Debug().Msgf("Added git dependency: %+v", viper.Get("dependencies.git"))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
-				log.Error().Msgf("Failed to write to config", err)
+				log.Error().Msgf("Failed to write to config, %s", err)
 			}
 			log.Debug().Msg("Written new config")
 		},
@@ -60,7 +60,7 @@ var (
 			}
 			log.Debug().Msgf("Removed git dependency: %+v", viper.Get("dependencies.git"))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
-				log.Error().Msgf("Failed to write to config", err)
+				log.Error().Msgf("Failed to write to config, %s", err)
 			}
 			log.Debug().Msg("Written new config")
 		},
