@@ -39,8 +39,8 @@ dependencies:
   url:
     - name: "faldorn-bg2ee"
       location: "https://downloads.weaselmods.net/download/faldorn-bg2ee/?wpdmdl=480&refresh=66ccff1d9457d1724710685"
-name: "mymods"
-version: "v1.0.0"
+      name: "mymods"
+      version: "v1.0.0"
 ```
 
 ## Install command
@@ -84,6 +84,7 @@ Use "wpm add [command] --help" for more information about a command.
 ```
 
 ### Url Dependency Example
+
 #### Long Form
 
 ```sh
@@ -115,8 +116,8 @@ dependencies:
         - name: test
           path: testPath.com
           version: 1.0.0
-name: mymods
-version: v1.0.0
+          name: mymods
+          version: v1.0.0
 ```
 
 ### Git Dependency Example
@@ -152,8 +153,8 @@ dependencies:
         - name: faldorn-bg2ee
           path: https://downloads.weaselmods.net/download/faldorn-bg2ee/?wpdmdl=480&refresh=66ccff1d9457d1724710685
           version: ""
-name: mymods
-version: v1.0.0
+          name: mymods
+          version: v1.0.0
 ```
 
 ## Rm Command
