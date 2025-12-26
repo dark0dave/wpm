@@ -31,8 +31,8 @@ func (d *Dependency) Download(config dropbox.Config, folderPath string) error {
 	defer f.Close()
 
 	bar := progressbar.DefaultBytes(
-			int64(meta.Size),
-			"downloading",
+		int64(meta.Size),
+		"downloading",
 	)
 
 	if _, err := io.Copy(io.MultiWriter(f, bar), contents); err != nil {
