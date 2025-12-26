@@ -30,7 +30,3 @@ from wpm.yaml file to the weidu_modules folder`,
 		},
 	}
 )
-
-func init() {
-	rootCmd.AddCommand(installCmd)
-}

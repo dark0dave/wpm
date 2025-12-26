@@ -2,9 +2,11 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
 	"runtime"
+	"runtime/debug"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -16,16 +18,15 @@ Weidu Package Manager
 Version:    {{.Version}}
 Go version: {{.GoVersion}}
 OS/Arch:    {{.OSArch}}
-Git commit: {{.GitCommit}}
 `
 
-var (
-	version string = "dev"
-	gitSha  string = "dev"
-)
-
-func infoMessage() (string, error) {
+func infoMessage() (*string, error) {
 	tmpl := template.Must(template.New("info").Parse(templateText))
+
+	buildInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		return nil, errors.New("Could not read build info")
+	}
 
 	data := struct {
 		Version   string
@@ -33,18 +34,18 @@ func infoMessage() (string, error) {
 		OSArch    string
 		GitCommit string
 	}{
-		Version:   version,
+		Version:   buildInfo.Main.Version,
 		GoVersion: runtime.Version(),
 		OSArch:    fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
-		GitCommit: gitSha,
 	}
 
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, data); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return strings.TrimSpace(buf.String()), nil
+	out := strings.TrimSpace(buf.String())
+	return &out, nil
 }
 
 var versionCmd = &cobra.Command{
@@ -58,11 +59,7 @@ var versionCmd = &cobra.Command{
 			log.Error().Msgf("Failed to print message: %s", err)
 			return err
 		}
-		log.Info().Msg(msg)
+		log.Info().Msg(*msg)
 		return nil
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(versionCmd)
 }

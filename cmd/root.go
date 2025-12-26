@@ -7,10 +7,9 @@ import (
 
 	"github.com/dark0dave/wpm/pkg/manifest"
 	"github.com/fatih/color"
-	"github.com/fsnotify/fsnotify"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"go.yaml.in/yaml/v3"
 )
 
 const (
@@ -19,26 +18,28 @@ const (
 )
 
 var (
-	m       manifest.Manifest
-	workers int = 5
-	rootCmd     = &cobra.Command{
+	m       *manifest.Manifest
+	path    string
+	workers int
+	rootCmd = &cobra.Command{
 		Use:   "wpm",
 		Short: "wpm is a weidu package manager",
 		Long:  `A Fast and Flexible Package Manager, designed to help wiedu modders share code.`,
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := loadManifestFile(); err != nil {
+				return err
+			}
+			return cmd.Help()
 		},
 	}
 )
 
-func loadManifestFile() (err error) {
-	viper.SetConfigName(ManifestFileName)
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	if err := viper.ReadInConfig(); err != nil {
+func loadManifestFile() error {
+	data, err := os.ReadFile(path)
+	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	if err := viper.Unmarshal(&m); err != nil {
+	if err := yaml.Unmarshal(data, m); err != nil {
 		log.Error().Msgf("Failed to parse config file, either wpm.yaml does not exist or fails to conform to expect structure: %+v", err)
 		return err
 	}
@@ -57,20 +58,21 @@ func colorize() {
 	re := regexp.MustCompile(`(?m)^Flags:\s*$`)
 	usageTemplate = re.ReplaceAllLiteralString(usageTemplate, `{{StyleHeading "Flags:"}}`)
 	usageTemplate = re.ReplaceAllLiteralString(usageTemplate, `{{CyanStyleHeading}}`)
-	rootCmd.PersistentFlags().IntVarP(&workers, "workers", "w", workers, "Number of works for wpm")
 	rootCmd.SetUsageTemplate(usageTemplate)
+}
+
+func init() {
+	rootCmd.PersistentFlags().StringVarP(&path, "path", "p", "wpm.yaml", "path to manifest")
+	rootCmd.PersistentFlags().IntVarP(&workers, "workers", "w", 5, "number of workers for downloading mods")
+
+	rootCmd.AddCommand(installCmd)
+	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(rmCmd)
+	rootCmd.AddCommand(versionCmd)
 }
 
 func Execute() {
 	colorize()
-	if err := loadManifestFile(); err != nil {
-		log.Error().Msgf("%+v", err)
-		os.Exit(1)
-	}
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Debug().Msgf("Config file changed: %+v", e)
-	})
-	viper.WatchConfig()
 	if err := rootCmd.Execute(); err != nil {
 		log.Error().Msgf("Failed with: %+v", err)
 		os.Exit(1)

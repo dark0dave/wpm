@@ -27,7 +27,7 @@ go.work.sum
 
 # Our files
 weidu*
-wpm*
+wpm.*
 
 # Secrets
 .envrc
@@ -37,3 +37,6 @@ wpm*
 .swp
 .idea
 .DS_Store
+.direnv
+result
+.go

@@ -15,7 +15,3 @@ var (
 		},
 	}
 )
-
-func init() {
-	rootCmd.AddCommand(addCmd)
-}
