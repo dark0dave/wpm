@@ -8,6 +8,7 @@ type Dependency interface {
 type DependancyType int
 
 const (
-	GIT DependancyType = 0
-	URL DependancyType = 1
+	GIT DependancyType = iota
+	URL
+	DROPBOX
 )
