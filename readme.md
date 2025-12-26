@@ -33,13 +33,11 @@ Use "wpm [command] --help" for more information about a command.
 dependencies:
   git:
     - name: "BaeBG2"
-      path: "https://github.com/dark0dave/BaeBG2"
-      version_type: "branch"
-      version: "main"
+      url: "https://github.com/dark0dave/BaeBG2"
+      ref: "main"
   url:
     - name: "faldorn-bg2ee"
-      location: "https://downloads.weaselmods.net/download/faldorn-bg2ee/?wpdmdl=480&refresh=66ccff1d9457d1724710685"
-      name: "mymods"
+      url: "https://downloads.weaselmods.net/download/faldorn-bg2ee/?wpdmdl=480&refresh=6945c590ce09a1766180240"
       version: "v1.0.0"
 ```
 

@@ -1,14 +1,13 @@
 package manifest
 
-type Dependency interface {
-	GetName() string
-	Download(folderPath string) error
-}
-
-type DependancyType int
-
 const (
-	GIT DependancyType = iota
+	GIT DependencyType = iota
 	URL
 	DROPBOX
 )
+
+type DependencyType int
+
+type Dependency interface {
+	Download(folderPath string) error
+}

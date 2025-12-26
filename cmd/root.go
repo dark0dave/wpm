@@ -13,12 +13,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-const ManifestFileName string = "wpm"
-const FolderPath string = "weidu_modules"
+const (
+	ManifestFileName string = "wpm"
+	FolderPath       string = "weidu_modules"
+)
 
 var (
 	m       manifest.Manifest
-	workers int = 2
+	workers int = 5
 	rootCmd     = &cobra.Command{
 		Use:   "wpm",
 		Short: "wpm is a weidu package manager",
@@ -51,8 +53,6 @@ func colorize() {
 		`Aliases:`, `{{StyleHeading "Aliases:"}}`,
 		`Available Commands:`, `{{StyleHeading "Available Commands:"}}`,
 		`Global Flags:`, `{{StyleHeading "Global Flags:"}}`,
-		// The following one steps on "Global Flags:"
-		// `Flags:`, `{{StyleHeading "Flags:"}}`,
 	).Replace(rootCmd.UsageTemplate())
 	re := regexp.MustCompile(`(?m)^Flags:\s*$`)
 	usageTemplate = re.ReplaceAllLiteralString(usageTemplate, `{{StyleHeading "Flags:"}}`)

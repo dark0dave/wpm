@@ -17,28 +17,15 @@ var (
 from wpm.yaml file to the weidu_modules folder`,
 		Run: func(cmd *cobra.Command, args []string) {
 			wg.Add(workers)
-			go func() {
-				for _, dep := range m.Dependencies.GitDependencies {
-					log.Debug().Msgf("Git Dep: %+v\n", dep)
-					go func() {
-						defer wg.Done()
-						if err := dep.Download(FolderPath); err != nil {
-							log.Error().Msgf("Failed to install, %s", err)
-						}
-					}()
-				}
-			}()
-			go func() {
-				for _, dep := range m.Dependencies.UrlDependencies {
-					log.Debug().Msgf("Url Dep: %+v\n", dep)
-					go func() {
-						defer wg.Done()
-						if err := dep.Download(FolderPath); err != nil {
-							log.Error().Msgf("Failed to install, %s", err)
-						}
-					}()
-				}
-			}()
+			for _, dep := range m.Dependencies {
+				log.Debug().Msgf("Dep: %+v\n", dep)
+				go func() {
+					defer wg.Done()
+					if err := dep.Download(FolderPath); err != nil {
+						log.Error().Msgf("Failed to install, %s", err)
+					}
+				}()
+			}
 			wg.Wait()
 		},
 	}

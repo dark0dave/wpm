@@ -3,34 +3,28 @@ package cmd
 import (
 	"os"
 
-	"github.com/dark0dave/wpm/pkg/manifest"
+	"github.com/dark0dave/wpm/pkg/url"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	urlName    string
-	urlPath    string
-	urlVersion string
-	urlAddCmd  = &cobra.Command{
+	urlName, urlPath, urlVersion string
+	urlAddCmd                    = &cobra.Command{
 		Use:     "url",
 		Aliases: []string{"u"},
 		Short:   "Add url dependencies",
 		Long:    `Add url dependencies to a manifest file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			urlDependency := manifest.UrlDependancy{
-				Name:    urlName,
-				Path:    urlPath,
-				Version: urlVersion,
-			}
-			for _, dep := range m.Dependencies.UrlDependencies {
+			urlDependency := url.New(urlName, urlPath, urlVersion)
+			for _, dep := range m.Dependencies {
 				if dep == urlDependency {
 					log.Error().Msgf("Url dependency already exists: %+v", dep)
 					os.Exit(1)
 				}
 			}
-			viper.Set("dependencies.url", append(m.Dependencies.UrlDependencies, urlDependency))
+			viper.Set("dependencies.url", append(m.Dependencies, urlDependency))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
 			}
@@ -43,14 +37,10 @@ var (
 		Short:   "Remove url dependencies",
 		Long:    `Remove url dependencies to a manifest file`,
 		Run: func(cmd *cobra.Command, args []string) {
-			urlDependency := manifest.UrlDependancy{
-				Name:    urlName,
-				Path:    urlPath,
-				Version: urlVersion,
-			}
-			for i, dep := range m.Dependencies.UrlDependencies {
+			urlDependency := url.New(urlName, urlPath, urlVersion)
+			for i, dep := range m.Dependencies {
 				if dep == urlDependency {
-					viper.Set("dependencies.url", append(m.Dependencies.UrlDependencies[:i], m.Dependencies.UrlDependencies[i+1:]...))
+					viper.Set("dependencies.url", append(m.Dependencies[:i], m.Dependencies[i+1:]...))
 					log.Debug().Msgf("Removed url dependency: %+v", dep)
 					break
 				}
