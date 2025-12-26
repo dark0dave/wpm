@@ -1,10 +1,12 @@
 package dropbox
 
 import (
+	"io"
 	"os"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
+	"github.com/schollz/progressbar/v3"
 )
 
 type Dependency struct {
@@ -13,10 +15,10 @@ type Dependency struct {
 	Version string `yaml:"version"`
 }
 
-func (d *Dependency) Download(folderPath string) error {
+func (d *Dependency) Download(config dropbox.Config, folderPath string) error {
 	link := files.NewDownloadArg(d.Url)
-	dbx := files.New(dropbox.Config{})
-	_, contents, err := dbx.Download(link)
+	dbx := files.New(config)
+	meta, contents, err := dbx.Download(link)
 	if err != nil {
 		return err
 	}
@@ -28,18 +30,14 @@ func (d *Dependency) Download(folderPath string) error {
 	}
 	defer f.Close()
 
-	// progressbar := &ioprogress.Reader{
-	// 	Reader: contents,
-	// 	DrawFunc: ioprogress.DrawTerminalf(os.Stderr, func(progress, total int64) string {
-	// 		return fmt.Sprintf("Downloading %s/%s",
-	// 			uint64(progress), uint64(total))
-	// 	}),
-	// 	Size: int64(res.Size),
-	// }
+	bar := progressbar.DefaultBytes(
+			int64(meta.Size),
+			"downloading",
+	)
 
-	// if _, err = io.Copy(f, progressbar); err != nil {
-	// 	return err
-	// }
+	if _, err := io.Copy(io.MultiWriter(f, bar), contents); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -10,8 +10,6 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 )
 
-const URLFOLDERNAME string = "url"
-
 type Dependency struct {
 	Name    string `yaml:"name"`
 	Url     u.URL  `yaml:"url"`
@@ -35,12 +33,11 @@ func (u *Dependency) Download(folderPath string) (err error) {
 
 	mtype, err := mimetype.DetectReader(res.Body)
 
-	path := filepath.Join(folderPath, URLFOLDERNAME)
-	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+	if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	file_path := filepath.Join(folderPath, URLFOLDERNAME, u.Name+mtype.Extension())
+	file_path := filepath.Join(folderPath, u.Name+mtype.Extension())
 	out, err := os.Create(file_path)
 	if err != nil {
 		return err

@@ -7,13 +7,17 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.12
 	github.com/go-git/go-git/v5 v5.16.4
 	github.com/rs/zerolog v1.34.0
+	github.com/schollz/progressbar/v3 v3.18.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
+	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
+	golang.org/x/term v0.38.0 // indirect
 )
 
 require (

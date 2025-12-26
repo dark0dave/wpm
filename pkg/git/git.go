@@ -8,8 +8,6 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 )
 
-const GITFOLDERNAME string = "git"
-
 type Dependency struct {
 	Name string                 `yaml:"name"`
 	Url  string                 `yaml:"url"`
@@ -25,7 +23,7 @@ func New(name, url, ref string) *Dependency {
 }
 
 func (g *Dependency) Download(folderPath string) error {
-	path := filepath.Join(folderPath, GITFOLDERNAME, g.Name)
+	path := filepath.Join(folderPath, g.Name)
 	_, err := git.PlainClone(path, true, &git.CloneOptions{
 		URL:           g.Url,
 		Progress:      os.Stdout,
