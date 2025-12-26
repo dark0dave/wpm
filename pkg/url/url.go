@@ -3,6 +3,7 @@ package url
 import (
 	"io"
 	"net/http"
+	u "net/url"
 	"os"
 	"path/filepath"
 
@@ -13,11 +14,11 @@ const URLFOLDERNAME string = "url"
 
 type Dependency struct {
 	Name    string `yaml:"name"`
-	Url     string `yaml:"url"`
+	Url     u.URL  `yaml:"url"`
 	Version string `yaml:"version"`
 }
 
-func New(name, url, version string) *Dependency {
+func New(name, version string, url u.URL) *Dependency {
 	return &Dependency{
 		Name:    name,
 		Url:     url,
@@ -26,7 +27,7 @@ func New(name, url, version string) *Dependency {
 }
 
 func (u *Dependency) Download(folderPath string) (err error) {
-	res, err := http.Get(string(u.Url))
+	res, err := http.Get(u.Url.String())
 	if err != nil {
 		return err
 	}

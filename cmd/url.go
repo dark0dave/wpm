@@ -1,7 +1,8 @@
 package cmd
 
 import (
-	"os"
+	"fmt"
+	u "net/url"
 
 	"github.com/dark0dave/wpm/pkg/url"
 	"github.com/rs/zerolog/log"
@@ -16,19 +17,24 @@ var (
 		Aliases: []string{"u"},
 		Short:   "Add url dependencies",
 		Long:    `Add url dependencies to a manifest file`,
-		Run: func(cmd *cobra.Command, args []string) {
-			urlDependency := url.New(urlName, urlPath, urlVersion)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			parseUrl, err := u.Parse(urlPath)
+			if err != nil {
+				return err
+			}
+			urlDependency := url.New(urlName, urlPath, *parseUrl)
 			for _, dep := range m.Dependencies {
 				if dep == urlDependency {
-					log.Error().Msgf("Url dependency already exists: %+v", dep)
-					os.Exit(1)
+					return fmt.Errorf("Url dependency already exists: %+v", dep)
 				}
 			}
 			viper.Set("dependencies.url", append(m.Dependencies, urlDependency))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
+				return err
 			}
 			log.Debug().Msgf("Written new config: %+v", viper.Get("dependencies.url"))
+			return nil
 		},
 	}
 	urlrmCmd = &cobra.Command{
@@ -36,8 +42,12 @@ var (
 		Aliases: []string{"u"},
 		Short:   "Remove url dependencies",
 		Long:    `Remove url dependencies to a manifest file`,
-		Run: func(cmd *cobra.Command, args []string) {
-			urlDependency := url.New(urlName, urlPath, urlVersion)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			parseUrl, err := u.Parse(urlPath)
+			if err != nil {
+				return err
+			}
+			urlDependency := url.New(urlName, urlPath, *parseUrl)
 			for i, dep := range m.Dependencies {
 				if dep == urlDependency {
 					viper.Set("dependencies.url", append(m.Dependencies[:i], m.Dependencies[i+1:]...))
@@ -47,8 +57,10 @@ var (
 			}
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
+				return err
 			}
 			log.Debug().Msgf("Written new config %+v", viper.Get("dependencies.url"))
+			return nil
 		},
 	}
 )

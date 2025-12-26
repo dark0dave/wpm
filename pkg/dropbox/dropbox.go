@@ -14,9 +14,9 @@ type Dependency struct {
 }
 
 func (d *Dependency) Download(folderPath string) error {
-	c := files.NewDownloadArg(d.Url)
+	link := files.NewDownloadArg(d.Url)
 	dbx := files.New(dropbox.Config{})
-	_, contents, err := dbx.Download(c)
+	_, contents, err := dbx.Download(link)
 	if err != nil {
 		return err
 	}

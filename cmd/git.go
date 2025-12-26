@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/dark0dave/wpm/pkg/git"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -14,21 +16,21 @@ var (
 		Aliases: []string{"g"},
 		Short:   "Add git dependencies",
 		Long:    `Add git dependencies to a manifest file`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gitDependency := git.New(gitName, gitUrl, gitRef)
 			for _, dep := range m.Dependencies {
 				if dep == gitDependency {
-					log.Error().Msgf("Git dependency already exists: %+v", dep)
-					cmd.ErrOrStderr().Write([]byte("Failed"))
-					return
+					return fmt.Errorf("Git dependency already exists: %+v", dep)
 				}
 			}
 			viper.Set("dependencies.git", append(m.Dependencies, gitDependency))
 			log.Debug().Msgf("Added git dependency: %+v", viper.Get("dependencies.git"))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
+				return err
 			}
 			log.Debug().Msg("Written new config")
+			return nil
 		},
 	}
 	gitrmCmd = &cobra.Command{
@@ -36,7 +38,7 @@ var (
 		Aliases: []string{"g"},
 		Short:   "Remove git dependencies",
 		Long:    `Remove git dependencies to a manifest file`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gitDependency := git.New(gitName, gitUrl, gitRef)
 			for i, dep := range m.Dependencies {
 				if dep == gitDependency {
@@ -48,8 +50,10 @@ var (
 			log.Debug().Msgf("Removed git dependency: %+v", viper.Get("dependencies.git"))
 			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
+				return err
 			}
 			log.Debug().Msg("Written new config")
+			return nil
 		},
 	}
 )

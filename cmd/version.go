@@ -52,13 +52,14 @@ var versionCmd = &cobra.Command{
 	Aliases: []string{"v"},
 	Short:   "Version info",
 	Long:    `Detailed information about the version`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if msg, err := infoMessage(); err != nil {
+	RunE: func(cmd *cobra.Command, args []string) error {
+		msg, err := infoMessage()
+		if err != nil {
 			log.Error().Msgf("Failed to print message: %s", err)
-		} else {
-			log.Info().Msg(msg)
+			return err
 		}
-
+		log.Info().Msg(msg)
+		return nil
 	},
 }
 
