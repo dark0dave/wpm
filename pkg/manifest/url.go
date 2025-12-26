@@ -2,7 +2,6 @@ package manifest
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -29,8 +28,9 @@ func (u *UrlDependancy) Download(folderPath string) (err error) {
 
 	path := filepath.Join(folderPath, url_folder_name)
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
-		log.Fatal(err)
+		return err
 	}
+
 	file_path := filepath.Join(folderPath, url_folder_name, u.Name+mtype.Extension())
 	out, err := os.Create(file_path)
 	if err != nil {
@@ -38,8 +38,7 @@ func (u *UrlDependancy) Download(folderPath string) (err error) {
 	}
 	defer out.Close()
 
-	_, err = io.Copy(out, res.Body)
-	if err != nil {
+	if _, err = io.Copy(out, res.Body); err != nil {
 		return err
 	}
 
