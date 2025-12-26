@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	slog = s.New(s.NewJSONHandler(os.Stdout, nil))
+	slog    = s.New(s.NewJSONHandler(os.Stdout, nil))
 	m       *manifest.Manifest
 	path    string
 	rootCmd = &cobra.Command{
