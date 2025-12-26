@@ -27,7 +27,7 @@ go.work.sum
 
 # Our files
 weidu*
-wpm.*
+wpm*
 
 # Secrets
 .envrc

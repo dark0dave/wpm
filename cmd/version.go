@@ -21,7 +21,10 @@ OS/Arch:    {{.OSArch}}
 `
 
 func infoMessage() (*string, error) {
-	tmpl := template.Must(template.New("info").Parse(templateText))
+	tmpl, err := template.New("info").Parse(templateText)
+	if err != nil {
+		return nil, err
+	}
 
 	buildInfo, ok := debug.ReadBuildInfo()
 	if !ok {
