@@ -7,71 +7,68 @@ import (
 	"github.com/dark0dave/wpm/pkg/url"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
-	urlName, urlPath, urlVersion string
-	urlAddCmd                    = &cobra.Command{
+	urlName, urlString, urlVersion string
+	parsedUrl                      *u.URL
+	urlAddCmd                      = &cobra.Command{
 		Use:     "url",
 		Aliases: []string{"u"},
 		Short:   "Add url dependencies",
 		Long:    `Add url dependencies to a manifest file`,
+		PreRunE: func(cmd *cobra.Command, args []string) (err error) {
+			parsedUrl, err = u.Parse(urlString)
+			return err
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseUrl, err := u.Parse(urlPath)
-			if err != nil {
-				return err
+			dependency := url.New(urlName, urlVersion, *parsedUrl)
+			_, ok := m.Dependencies[urlName]
+			if ok {
+				return fmt.Errorf("Git dependency already exists: %+v", dependency)
 			}
-			urlDependency := url.New(urlName, urlPath, *parseUrl)
-			for _, dep := range m.Dependencies {
-				if dep == urlDependency {
-					return fmt.Errorf("Url dependency already exists: %+v", dep)
-				}
-			}
-			viper.Set("dependencies.url", append(m.Dependencies, urlDependency))
-			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
+			m.Dependencies[urlName] = *dependency.Dependency
+			if err := m.Write(path); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
 				return err
 			}
-			log.Debug().Msgf("Written new config: %+v", viper.Get("dependencies.url"))
+			log.Trace().Msgf("Written new config: %+v", m.Dependencies)
 			return nil
 		},
 	}
-	urlrmCmd = &cobra.Command{
+	urlRemoveCmd = &cobra.Command{
 		Use:     "url",
 		Aliases: []string{"u"},
 		Short:   "Remove url dependencies",
 		Long:    `Remove url dependencies to a manifest file`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			parseUrl, err := u.Parse(urlPath)
-			if err != nil {
-				return err
+			_, ok := m.Dependencies[urlName]
+			if ok {
+				delete(m.Dependencies, urlName)
 			}
-			urlDependency := url.New(urlName, urlPath, *parseUrl)
-			for i, dep := range m.Dependencies {
-				if dep == urlDependency {
-					viper.Set("dependencies.url", append(m.Dependencies[:i], m.Dependencies[i+1:]...))
-					log.Debug().Msgf("Removed url dependency: %+v", dep)
-					break
-				}
-			}
-			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
+			if err := m.Write(path); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
 				return err
 			}
-			log.Debug().Msgf("Written new config %+v", viper.Get("dependencies.url"))
+			log.Trace().Msgf("Written new config: %+v", m.Dependencies)
 			return nil
 		},
 	}
 )
 
 func init() {
-	urlAddCmd.PersistentFlags().StringVarP(&urlName, "name", "n", "", "")
-	urlAddCmd.PersistentFlags().StringVarP(&urlPath, "path", "p", "", "")
-	urlAddCmd.PersistentFlags().StringVarP(&urlVersion, "version", "v", "", "")
-	urlrmCmd.PersistentFlags().StringVarP(&urlName, "name", "n", "", "")
-	urlrmCmd.PersistentFlags().StringVarP(&urlPath, "path", "p", "", "")
-	urlrmCmd.PersistentFlags().StringVarP(&urlVersion, "version", "v", "", "")
+	urlAddCmd.Flags().StringVar(&urlName, "name", "n", "")
+	urlAddCmd.Flags().StringVar(&urlString, "url", "u", "")
+	urlAddCmd.Flags().StringVar(&urlVersion, "version", "v", "")
+	urlAddCmd.MarkFlagRequired("name")
+	urlAddCmd.MarkFlagRequired("url")
+	urlAddCmd.MarkFlagRequired("version")
+	urlRemoveCmd.Flags().StringVar(&urlName, "name", "n", "")
+	urlRemoveCmd.Flags().StringVar(&urlString, "url", "u", "")
+	urlRemoveCmd.Flags().StringVar(&urlVersion, "version", "v", "")
+	urlRemoveCmd.MarkFlagRequired("name")
+	urlRemoveCmd.MarkFlagRequired("url")
+	urlRemoveCmd.MarkFlagRequired("version")
 	addCmd.AddCommand(urlAddCmd)
-	rmCmd.AddCommand(urlrmCmd)
+	rmCmd.AddCommand(urlRemoveCmd)
 }

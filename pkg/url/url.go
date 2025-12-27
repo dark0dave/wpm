@@ -7,20 +7,22 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/dark0dave/wpm/pkg/manifest"
 	"github.com/gabriel-vasile/mimetype"
 )
 
 type Dependency struct {
-	Name    string `yaml:"name"`
-	Url     u.URL  `yaml:"url"`
-	Version string `yaml:"version"`
+	*manifest.Dependency
 }
 
 func New(name, version string, url u.URL) *Dependency {
 	return &Dependency{
-		Name:    name,
-		Url:     url,
-		Version: version,
+		Dependency: &manifest.Dependency{
+			Name:     name,
+			Url:      url,
+			Version:  version,
+			Protocol: manifest.Url,
+		},
 	}
 }
 

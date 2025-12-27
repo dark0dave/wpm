@@ -12,7 +12,7 @@ var (
 			return cmd.Help()
 		},
 	}
-	dropboxRmCmd = &cobra.Command{
+	dropboxRemoveCmd = &cobra.Command{
 		Use:     "dropbox",
 		Aliases: []string{"d"},
 		Short:   "Remove dropbox dependencies",
@@ -25,5 +25,5 @@ var (
 
 func init() {
 	addCmd.AddCommand(dropboxAddCmd)
-	rmCmd.AddCommand(dropboxRmCmd)
+	rmCmd.AddCommand(dropboxRemoveCmd)
 }

@@ -3,14 +3,13 @@ package manifest
 import (
 	"os"
 
-	"github.com/rs/zerolog/log"
-	"go.yaml.in/yaml/v3"
+	"go.yaml.in/yaml/v4"
 )
 
 type Manifest struct {
-	Name         string       `yaml:"name"`
-	Version      string       `yaml:"version"`
-	Dependencies []Dependency `mapstructure:"dependencies"`
+	Name         string                `yaml:"name"`
+	Version      string                `yaml:"version"`
+	Dependencies map[string]Dependency `yaml:"dependencies"`
 }
 
 func LoadManifestFile(path string) (*Manifest, error) {
@@ -20,8 +19,18 @@ func LoadManifestFile(path string) (*Manifest, error) {
 	}
 	m := &Manifest{}
 	if err := yaml.Unmarshal(data, m); err != nil {
-		log.Error().Msgf("Failed to parse config file, either wpm.yaml does not exist or fails to conform to expect structure: %+v", err)
 		return nil, err
 	}
+	if m.Dependencies == nil {
+		m.Dependencies = make(map[string]Dependency)
+	}
 	return m, nil
+}
+
+func (m *Manifest) Write(path string) error {
+	data, err := yaml.Marshal(m)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0644)
 }

@@ -2,16 +2,15 @@ package cmd
 
 import (
 	"errors"
+	"io/fs"
 	"os"
-	"path/filepath"
 
 	s "log/slog"
 
+	"github.com/dark0dave/wpm/pkg/config"
 	"github.com/dark0dave/wpm/pkg/manifest"
 	"github.com/dark0dave/wpm/pkg/util"
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 const (
@@ -20,61 +19,43 @@ const (
 )
 
 var (
-	slog    = s.New(s.NewJSONHandler(os.Stdout, nil))
-	m       *manifest.Manifest
-	path    string
-	rootCmd = &cobra.Command{
+	slog                                = s.New(s.NewJSONHandler(os.Stdout, nil))
+	c                                   *config.Config
+	m                                   *manifest.Manifest
+	path, manifestName, manifestVersion string
+	rootCmd                             = &cobra.Command{
 		Use:   "wpm",
 		Short: "wpm is a weidu package manager",
 		Long:  `A Fast and Flexible Package Manager, designed to help wiedu modders share code.`,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			if m, err = manifest.LoadManifestFile(path); err != nil {
-				return err
-			}
 			return cmd.Help()
 		},
 	}
 )
 
 func initConfig() {
-	configPath := os.Getenv("XDGHOME")
-	if configPath == "" {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-		configPath = filepath.Join(home, ".config")
-	}
-
-	filePath := filepath.Join(configPath, "wpm", "default.yaml")
-	viper.SetConfigFile(filePath)
-	viper.AutomaticEnv()
-	viper.WithLogger(slog)
-
-	err := viper.ReadInConfig()
-	if err == nil {
-		slog.Debug("Using config file: %s", "file", viper.ConfigFileUsed())
+	err := config.InitViper(slog)
+	cobra.CheckErr(err)
+	c, err = config.Load()
+	cobra.CheckErr(err)
+	m, err = manifest.LoadManifestFile(path)
+	if errors.Is(err, fs.ErrNotExist) {
+		m = &manifest.Manifest{
+			Name:         manifestName,
+			Version:      manifestVersion,
+			Dependencies: make(map[string]manifest.Dependency),
+		}
 		return
 	}
-
-	if !errors.As(err, &viper.ConfigFileNotFoundError{}) {
-		slog.Error("Config fail to initialize", "error", err)
-		return
-	}
-
-	slog.Info("First time run, creating the config file at", "directory", filePath)
-
-	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
-		slog.Error("Could not create the config directory", "error", err)
-		return
-	}
-
-	f, err := os.Create(filePath)
 	if err != nil {
-		slog.Error("Could not create the config file", "error", err)
-		return
+		slog.Error("Failed to parse config file, either wpm.yaml does not exist or fails to conform to expected structure", "error", err)
+		cobra.CheckErr(err)
 	}
-	if err := viper.WriteConfigTo(f); err != nil {
-		slog.Error("Could not create the config file", "error", err)
-		return
+	if m.Name == "" {
+		slog.Warn("Name of log empty", "path", path)
+	}
+	if m.Version == "" {
+		slog.Warn("Version of log empty")
 	}
 }
 
@@ -82,6 +63,8 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVarP(&path, "path", "p", "wpm.yaml", "path to manifest")
+	rootCmd.PersistentFlags().StringVarP(&manifestName, "manifest", "m", "New Manifest", "name for manifest")
+	rootCmd.PersistentFlags().StringVarP(&manifestVersion, "x", "x", "1.0.0", "manifest version")
 
 	rootCmd.AddCommand(installCmd)
 	rootCmd.AddCommand(addCmd)
@@ -91,12 +74,8 @@ func init() {
 
 func Execute() {
 	util.AddColor(rootCmd)
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		slog.Debug("Config file changed: %+v", e)
-	})
-	viper.WatchConfig()
 	if err := rootCmd.Execute(); err != nil {
-		slog.Debug("Failed with: %+v", err)
+		slog.Error("Failed", "error", err)
 		os.Exit(1)
 	}
 }

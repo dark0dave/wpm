@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	u "net/url"
 
 	"github.com/dark0dave/wpm/pkg/git"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -16,55 +16,60 @@ var (
 		Aliases: []string{"g"},
 		Short:   "Add git dependencies",
 		Long:    `Add git dependencies to a manifest file`,
+		PreRunE: func(cmd *cobra.Command, args []string) (err error) {
+			parsedUrl, err = u.Parse(gitUrl)
+			return err
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			gitDependency := git.New(gitName, gitUrl, gitRef)
-			for _, dep := range m.Dependencies {
-				if dep == gitDependency {
-					return fmt.Errorf("Git dependency already exists: %+v", dep)
-				}
+			dependency := git.New(gitName, gitRef, *parsedUrl)
+			_, ok := m.Dependencies[gitName]
+			if ok {
+				return fmt.Errorf("Git dependency already exists: %+v", dependency)
 			}
-			viper.Set("dependencies.git", append(m.Dependencies, gitDependency))
-			log.Debug().Msgf("Added git dependency: %+v", viper.Get("dependencies.git"))
-			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
+			m.Dependencies[gitName] = *dependency.Dependency
+			log.Debug().Msgf("Added git dependency: %+v", dependency)
+			if err := m.Write(path); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
 				return err
 			}
-			log.Debug().Msg("Written new config")
+			log.Trace().Msg("Written new config")
 			return nil
 		},
 	}
-	gitrmCmd = &cobra.Command{
+	gitRemoveCmd = &cobra.Command{
 		Use:     "git",
 		Aliases: []string{"g"},
 		Short:   "Remove git dependencies",
 		Long:    `Remove git dependencies to a manifest file`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			gitDependency := git.New(gitName, gitUrl, gitRef)
-			for i, dep := range m.Dependencies {
-				if dep == gitDependency {
-					viper.Set("dependencies.git", append(m.Dependencies[:i], m.Dependencies[i+1:]...))
-					log.Debug().Msgf("Removed git dependency: %+v", dep)
-					break
-				}
+			val, ok := m.Dependencies[gitName]
+			if ok {
+				delete(m.Dependencies, gitName)
 			}
-			log.Debug().Msgf("Removed git dependency: %+v", viper.Get("dependencies.git"))
-			if err := viper.WriteConfigAs(viper.ConfigFileUsed()); err != nil {
+			log.Debug().Msgf("Removed git dependency: %+v", val)
+			if err := m.Write(path); err != nil {
 				log.Error().Msgf("Failed to write to config, %s", err)
 				return err
 			}
-			log.Debug().Msg("Written new config")
+			log.Trace().Msg("Written new config")
 			return nil
 		},
 	}
 )
 
 func init() {
-	gitAddCmd.PersistentFlags().StringVarP(&gitName, "name", "n", "", "")
-	gitAddCmd.PersistentFlags().StringVarP(&gitUrl, "path", "p", "", "")
-	gitAddCmd.PersistentFlags().StringVarP(&gitRef, "ref", "r", "", "")
-	gitrmCmd.PersistentFlags().StringVarP(&gitName, "name", "n", "", "")
-	gitrmCmd.PersistentFlags().StringVarP(&gitUrl, "path", "p", "", "")
-	gitrmCmd.PersistentFlags().StringVarP(&gitRef, "ref", "r", "", "")
+	gitAddCmd.Flags().StringVar(&gitName, "name", "n", "")
+	gitAddCmd.Flags().StringVar(&gitRef, "ref", "r", "")
+	gitAddCmd.Flags().StringVar(&gitUrl, "url", "u", "")
+	gitAddCmd.MarkFlagRequired("name")
+	gitAddCmd.MarkFlagRequired("url")
+	gitAddCmd.MarkFlagRequired("ref")
+	gitRemoveCmd.Flags().StringVar(&gitName, "name", "n", "")
+	gitRemoveCmd.Flags().StringVar(&gitUrl, "url", "u", "")
+	gitRemoveCmd.Flags().StringVar(&gitRef, "ref", "r", "")
+	gitRemoveCmd.MarkFlagRequired("name")
+	gitRemoveCmd.MarkFlagRequired("url")
+	gitRemoveCmd.MarkFlagRequired("ref")
 	addCmd.AddCommand(gitAddCmd)
-	rmCmd.AddCommand(gitrmCmd)
+	rmCmd.AddCommand(gitRemoveCmd)
 }
