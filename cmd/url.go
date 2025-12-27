@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	u "net/url"
 
 	"github.com/dark0dave/wpm/pkg/url"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -22,18 +20,7 @@ var (
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			dependency := url.New(urlName, urlVersion, *parsedUrl)
-			_, ok := m.Dependencies[urlName]
-			if ok {
-				return fmt.Errorf("Git dependency already exists: %+v", dependency)
-			}
-			m.Dependencies[urlName] = *dependency.Dependency
-			if err := m.Write(path); err != nil {
-				log.Error().Msgf("Failed to write to config, %s", err)
-				return err
-			}
-			log.Trace().Msgf("Written new config: %+v", m.Dependencies)
-			return nil
+			return url.Add(m, path, urlName, urlVersion, parsedUrl)
 		},
 	}
 	urlRemoveCmd = &cobra.Command{
@@ -42,16 +29,7 @@ var (
 		Short:   "Remove url dependencies",
 		Long:    `Remove url dependencies to a manifest file`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_, ok := m.Dependencies[urlName]
-			if ok {
-				delete(m.Dependencies, urlName)
-			}
-			if err := m.Write(path); err != nil {
-				log.Error().Msgf("Failed to write to config, %s", err)
-				return err
-			}
-			log.Trace().Msgf("Written new config: %+v", m.Dependencies)
-			return nil
+			return url.Remove(m, path, urlName)
 		},
 	}
 )

@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"fmt"
 	u "net/url"
 
 	"github.com/dark0dave/wpm/pkg/git"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -21,19 +19,7 @@ var (
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			dependency := git.New(gitName, gitRef, *parsedUrl)
-			_, ok := m.Dependencies[gitName]
-			if ok {
-				return fmt.Errorf("Git dependency already exists: %+v", dependency)
-			}
-			m.Dependencies[gitName] = *dependency.Dependency
-			log.Debug().Msgf("Added git dependency: %+v", dependency)
-			if err := m.Write(path); err != nil {
-				log.Error().Msgf("Failed to write to config, %s", err)
-				return err
-			}
-			log.Trace().Msg("Written new config")
-			return nil
+			return git.Add(m, path, gitName, gitRef, parsedUrl)
 		},
 	}
 	gitRemoveCmd = &cobra.Command{
@@ -42,17 +28,7 @@ var (
 		Short:   "Remove git dependencies",
 		Long:    `Remove git dependencies to a manifest file`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			val, ok := m.Dependencies[gitName]
-			if ok {
-				delete(m.Dependencies, gitName)
-			}
-			log.Debug().Msgf("Removed git dependency: %+v", val)
-			if err := m.Write(path); err != nil {
-				log.Error().Msgf("Failed to write to config, %s", err)
-				return err
-			}
-			log.Trace().Msg("Written new config")
-			return nil
+			return git.Remove(m, path, gitName)
 		},
 	}
 )
