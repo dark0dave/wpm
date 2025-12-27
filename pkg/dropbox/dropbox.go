@@ -11,8 +11,13 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
+var (
+	Token string = os.Getenv("DROPBOX_TOKEN")
+)
+
 type Dependency struct {
 	*manifest.Dependency
+	config *dropbox.Config
 }
 
 func New(name, version string, url u.URL) *Dependency {
@@ -23,12 +28,15 @@ func New(name, version string, url u.URL) *Dependency {
 			Version:  version,
 			Protocol: manifest.DropBox,
 		},
+		config: &dropbox.Config{
+			Token: Token,
+		},
 	}
 }
 
-func (d *Dependency) Download(config dropbox.Config, folderPath string) error {
+func (d *Dependency) Download(folderPath string) error {
 	link := files.NewDownloadArg(d.Url.String())
-	dbx := files.New(config)
+	dbx := files.New(*d.config)
 	meta, contents, err := dbx.Download(link)
 	if err != nil {
 		return err

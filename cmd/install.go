@@ -1,6 +1,12 @@
 package cmd
 
 import (
+	"errors"
+
+	"github.com/dark0dave/wpm/pkg/dropbox"
+	"github.com/dark0dave/wpm/pkg/git"
+	"github.com/dark0dave/wpm/pkg/manifest"
+	"github.com/dark0dave/wpm/pkg/url"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
@@ -18,7 +24,7 @@ from wpm.yaml file to the weidu_modules folder`,
 			for _, dep := range m.Dependencies {
 				log.Debug().Msgf("Dep: %+v\n", dep)
 				wg.Go(func() error {
-					if err := dep.Download(FolderPath); err != nil {
+					if err := download(&dep, FolderPath); err != nil {
 						log.Error().Msgf("Failed to install, %s", err)
 						return err
 					}
@@ -29,3 +35,19 @@ from wpm.yaml file to the weidu_modules folder`,
 		},
 	}
 )
+
+func download(d *manifest.Dependency, folderPath string) error {
+	switch d.Protocol {
+	case manifest.DropBox:
+		d := dropbox.Dependency{Dependency: d}
+		return d.Download(folderPath)
+	case manifest.Git:
+		d := git.Dependency{Dependency: d}
+		return d.Download(folderPath)
+	case manifest.Url:
+		d := url.Dependency{Dependency: d}
+		return d.Download(folderPath)
+	default:
+		return errors.New("unsupported protocol")
+	}
+}

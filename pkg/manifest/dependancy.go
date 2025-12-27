@@ -1,6 +1,8 @@
 package manifest
 
-import "net/url"
+import (
+	u "net/url"
+)
 
 type DependencyProps interface {
 	Download(folderPath string) error
@@ -8,11 +10,7 @@ type DependencyProps interface {
 
 type Dependency struct {
 	Name     string   `yaml:"name"`
-	Url      url.URL  `yaml:"url"`
+	Url      u.URL    `yaml:"url"`
 	Version  string   `yaml:"version"`
 	Protocol Protocol `yaml:"protocol"`
-}
-
-func (d *Dependency) Download(folderPath string) error {
-	panic("Unimplemented")
 }
