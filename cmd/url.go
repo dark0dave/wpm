@@ -7,10 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	urlName, urlString, urlVersion string
-	parsedUrl                      *u.URL
-	urlAddCmd                      = &cobra.Command{
+func urlAddCmd() *cobra.Command {
+	var name, urlString, version string
+	var parsedUrl *u.URL
+	cmd := &cobra.Command{
 		Use:     "url",
 		Aliases: []string{"u"},
 		Short:   "Add url dependencies",
@@ -20,33 +20,39 @@ var (
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return url.Add(m, path, urlName, urlVersion, parsedUrl)
+			return url.Add(m, path, name, version, parsedUrl)
 		},
 	}
-	urlRemoveCmd = &cobra.Command{
+
+	cmd.Flags().StringVar(&name, "name", "n", "")
+	cmd.Flags().StringVar(&urlString, "url", "u", "")
+	cmd.Flags().StringVar(&version, "version", "v", "")
+	cmd.MarkFlagRequired("name")
+	cmd.MarkFlagRequired("url")
+	cmd.MarkFlagRequired("version")
+
+	return cmd
+}
+
+func urlRemoveCmd() *cobra.Command {
+	var name string
+	cmd := &cobra.Command{
 		Use:     "url",
 		Aliases: []string{"u"},
 		Short:   "Remove url dependencies",
 		Long:    `Remove url dependencies to a manifest file`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return url.Remove(m, path, urlName)
+			return url.Remove(m, path, name)
 		},
 	}
-)
+
+	cmd.Flags().StringVar(&name, "name", "n", "")
+	cmd.MarkFlagRequired("name")
+
+	return cmd
+}
 
 func init() {
-	urlAddCmd.Flags().StringVar(&urlName, "name", "n", "")
-	urlAddCmd.Flags().StringVar(&urlString, "url", "u", "")
-	urlAddCmd.Flags().StringVar(&urlVersion, "version", "v", "")
-	urlAddCmd.MarkFlagRequired("name")
-	urlAddCmd.MarkFlagRequired("url")
-	urlAddCmd.MarkFlagRequired("version")
-	urlRemoveCmd.Flags().StringVar(&urlName, "name", "n", "")
-	urlRemoveCmd.Flags().StringVar(&urlString, "url", "u", "")
-	urlRemoveCmd.Flags().StringVar(&urlVersion, "version", "v", "")
-	urlRemoveCmd.MarkFlagRequired("name")
-	urlRemoveCmd.MarkFlagRequired("url")
-	urlRemoveCmd.MarkFlagRequired("version")
-	addCmd.AddCommand(urlAddCmd)
-	rmCmd.AddCommand(urlRemoveCmd)
+	addCmd.AddCommand(urlAddCmd())
+	rmCmd.AddCommand(urlRemoveCmd())
 }
