@@ -1,8 +1,9 @@
 package url
 
 import (
+	"log/slog"
+
 	"github.com/dark0dave/wpm/pkg/manifest"
-	"github.com/rs/zerolog/log"
 )
 
 func Remove(m *manifest.Manifest, path, name string) error {
@@ -11,9 +12,9 @@ func Remove(m *manifest.Manifest, path, name string) error {
 		delete(m.Dependencies, name)
 	}
 	if err := m.Write(path); err != nil {
-		log.Error().Msgf("Failed to write to config, %s", err)
+		slog.Error("Failed to write to config", slog.Any("error", err))
 		return err
 	}
-	log.Trace().Msgf("Written new config: %+v", m.Dependencies)
+	slog.Debug("Written new config: %+v", slog.Any("dependencies", m.Dependencies))
 	return nil
 }

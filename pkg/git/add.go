@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"net/url"
 
+	"log/slog"
+
 	"github.com/dark0dave/wpm/pkg/manifest"
-	"github.com/rs/zerolog/log"
 )
 
 func Add(m *manifest.Manifest, path, name, ref string, url *url.URL) error {
@@ -15,11 +16,11 @@ func Add(m *manifest.Manifest, path, name, ref string, url *url.URL) error {
 		return fmt.Errorf("Git dependency already exists: %#v", *dependency)
 	}
 	m.Dependencies[name] = *dependency.Dependency
-	log.Debug().Msgf("Added git dependency: %+v", dependency)
+	slog.Debug("Added git dependency", slog.Any("dependency", dependency))
 	if err := m.Write(path); err != nil {
-		log.Error().Msgf("Failed to write to config, %s", err)
+		slog.Error("Failed to write to config", slog.Any("error", err))
 		return err
 	}
-	log.Trace().Msg("Written new config")
+	slog.Debug("Written new config")
 	return nil
 }

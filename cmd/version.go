@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	s "log/slog"
 	"runtime"
 	"runtime/debug"
 	"strings"
 
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -59,10 +59,10 @@ var versionCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		msg, err := infoMessage()
 		if err != nil {
-			log.Error().Msgf("Failed to print message: %s", err)
+			slog.Error("Failed to print message", s.Any("error", err))
 			return err
 		}
-		log.Info().Msg(*msg)
+		slog.Info(*msg)
 		return nil
 	},
 }

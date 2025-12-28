@@ -1,4 +1,4 @@
-package git
+package dropbox
 
 import (
 	"log/slog"
@@ -13,7 +13,7 @@ func Remove(m *manifest.Manifest, path, name string) error {
 	}
 	slog.Debug("Removed git dependency", slog.Any("dependency", val))
 	if err := m.Write(path); err != nil {
-		slog.Error("Failed to write to config", slog.Any("error", err))
+		slog.Error("Failed to write to config, %s", slog.Any("error", err))
 		return err
 	}
 	slog.Debug("Written new config")
