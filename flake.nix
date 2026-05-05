@@ -17,10 +17,11 @@
         system:
         let
           pkgs = import nixpkgs { inherit system; };
-          overrides = (builtins.fromTOML (builtins.readFile ./rust-toolchain.toml));
-          remote = builtins.fetchTarball {
-            url = "https://github.com/jdx/hk/archive/refs/tags/v1.44.2.tar.gz";
-            sha256 = "0a045ixfkj79f9nkiw598vraifv1dj744c6wjxbfaz478xli37rw";
+          remote = pkgs.fetchFromGitHub {
+            owner = "jdx";
+            repo = "hk";
+            rev = "refs/tags/v1.44.2";
+            hash = "sha256-PJ8RaUeHfOVWl9wwQo5sYbuo8kap8DhtcunI6XosBCg=";
           };
           hk = pkgs.callPackage (remote + "/default.nix") { };
         in
