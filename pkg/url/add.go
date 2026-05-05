@@ -2,17 +2,14 @@ package url
 
 import (
 	"fmt"
-	"net/url"
+	"log/slog"
 
 	"github.com/dark0dave/wpm/pkg/manifest"
-
-	"log/slog"
 )
 
-func Add(m *manifest.Manifest, path, name, version string, url *url.URL) error {
-	dependency := New(name, version, *url)
-	_, ok := m.Dependencies[name]
-	if ok {
+func Add(m *manifest.Manifest, path, name, version, url string) error {
+	dependency := New(name, version, url)
+	if _, ok := m.Dependencies[name]; ok {
 		return fmt.Errorf("Git dependency already exists: %+v", dependency)
 	}
 	m.Dependencies[name] = *dependency.Dependency

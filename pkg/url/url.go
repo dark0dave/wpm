@@ -3,7 +3,6 @@ package url
 import (
 	"io"
 	"net/http"
-	u "net/url"
 	"os"
 	"path/filepath"
 
@@ -15,7 +14,7 @@ type Dependency struct {
 	*manifest.Dependency
 }
 
-func New(name, version string, url u.URL) *Dependency {
+func New(name, version, url string) *Dependency {
 	return &Dependency{
 		Dependency: &manifest.Dependency{
 			Name:     name,
@@ -27,14 +26,13 @@ func New(name, version string, url u.URL) *Dependency {
 }
 
 func (u *Dependency) Download(folderPath string) (err error) {
-	res, err := http.Get(u.Url.String())
+	res, err := http.Get(u.Url)
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
 
 	mtype, err := mimetype.DetectReader(res.Body)
-
 	if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
 		return err
 	}
@@ -49,6 +47,5 @@ func (u *Dependency) Download(folderPath string) (err error) {
 	if _, err = io.Copy(out, res.Body); err != nil {
 		return err
 	}
-
 	return nil
 }

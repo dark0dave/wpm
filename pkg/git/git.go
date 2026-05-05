@@ -4,8 +4,6 @@ import (
 	"os"
 	"path/filepath"
 
-	u "net/url"
-
 	"github.com/dark0dave/wpm/pkg/manifest"
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -15,8 +13,8 @@ type Dependency struct {
 	*manifest.Dependency
 }
 
-func New(name, ref string, url u.URL) *Dependency {
-	out := &Dependency{
+func New(name, ref, url string) *Dependency {
+	return &Dependency{
 		Dependency: &manifest.Dependency{
 			Name:     name,
 			Url:      url,
@@ -24,13 +22,12 @@ func New(name, ref string, url u.URL) *Dependency {
 			Protocol: manifest.Git,
 		},
 	}
-	return out
 }
 
 func (g *Dependency) Download(folderPath string) error {
 	path := filepath.Join(folderPath, g.Name)
 	_, err := git.PlainClone(path, true, &git.CloneOptions{
-		URL:           g.Url.String(),
+		URL:           g.Url,
 		Progress:      os.Stdout,
 		ReferenceName: plumbing.ReferenceName(g.Version),
 		SingleBranch:  true,

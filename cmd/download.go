@@ -4,7 +4,6 @@ import (
 	"errors"
 	s "log/slog"
 
-	"github.com/dark0dave/wpm/pkg/dropbox"
 	"github.com/dark0dave/wpm/pkg/git"
 	"github.com/dark0dave/wpm/pkg/manifest"
 	"github.com/dark0dave/wpm/pkg/url"
@@ -13,19 +12,19 @@ import (
 )
 
 var (
-	wg         errgroup.Group
-	installCmd = &cobra.Command{
-		Use:     "install",
-		Aliases: []string{"i"},
-		Short:   "Install all the dependencies from your project file (wpm.yaml)",
-		Long: `Install all the dependencies in your project
+	wg          errgroup.Group
+	downloadCmd = &cobra.Command{
+		Use:     "download",
+		Aliases: []string{"d"},
+		Short:   "Download all the dependencies from your project file (wpm.yaml)",
+		Long: `Download all the dependencies in your project
 from wpm.yaml file to the weidu_modules folder`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			for _, dep := range m.Dependencies {
 				slog.Debug("Dependency", s.Any("dependency", dep))
 				wg.Go(func() error {
 					if err := download(&dep, FolderPath); err != nil {
-						slog.Error("Failed to install", s.Any("error", err))
+						slog.Error("Failed to download", s.Any("error", err))
 						return err
 					}
 					return nil
@@ -38,9 +37,6 @@ from wpm.yaml file to the weidu_modules folder`,
 
 func download(d *manifest.Dependency, folderPath string) error {
 	switch d.Protocol {
-	case manifest.DropBox:
-		d := dropbox.Dependency{Dependency: d}
-		return d.Download(folderPath)
 	case manifest.Git:
 		d := git.Dependency{Dependency: d}
 		return d.Download(folderPath)

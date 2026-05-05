@@ -9,18 +9,17 @@ import (
 
 func gitAddCmd() *cobra.Command {
 	var name, url, ref string
-	var parsedUrl *u.URL
 	cmd := &cobra.Command{
 		Use:     "git",
 		Aliases: []string{"g"},
 		Short:   "Add git dependencies",
 		Long:    `Add git dependencies to a manifest file`,
 		PreRunE: func(cmd *cobra.Command, args []string) (err error) {
-			parsedUrl, err = u.Parse(url)
+			_, err = u.Parse(url)
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return git.Add(m, path, name, ref, parsedUrl)
+			return git.Add(m, path, name, ref, url)
 		},
 	}
 
@@ -53,7 +52,6 @@ func gitRemoveCmd() *cobra.Command {
 }
 
 func init() {
-
 	addCmd.AddCommand(gitAddCmd())
 	rmCmd.AddCommand(gitRemoveCmd())
 }
