@@ -9,18 +9,17 @@ import (
 
 func urlAddCmd() *cobra.Command {
 	var name, urlString, version string
-	var parsedUrl *u.URL
 	cmd := &cobra.Command{
 		Use:     "url",
 		Aliases: []string{"u"},
 		Short:   "Add url dependencies",
 		Long:    `Add url dependencies to a manifest file`,
 		PreRunE: func(cmd *cobra.Command, args []string) (err error) {
-			parsedUrl, err = u.Parse(urlString)
+			_, err = u.Parse(urlString)
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return url.Add(m, path, name, version, parsedUrl)
+			return url.Add(m, path, name, version, urlString)
 		},
 	}
 

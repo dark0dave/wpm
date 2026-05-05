@@ -5,14 +5,13 @@ type Protocol int
 const (
 	Git Protocol = iota
 	Url
-	DropBox
+	Github
 )
 
 var (
 	protocolName = map[Protocol]string{
-		Git:     "Git",
-		Url:     "Url",
-		DropBox: "DropBox",
+		Git: "Git",
+		Url: "Url",
 	}
 )
 

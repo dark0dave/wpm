@@ -1,16 +1,13 @@
 package manifest
 
-import (
-	u "net/url"
-)
-
 type DependencyProps interface {
 	Download(folderPath string) error
 }
 
 type Dependency struct {
 	Name     string   `yaml:"name"`
-	Url      u.URL    `yaml:"url"`
+	Url      string   `yaml:"url"`
 	Version  string   `yaml:"version"`
 	Protocol Protocol `yaml:"protocol"`
+	CheckSum string   `yaml:"checksum"`
 }

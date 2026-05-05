@@ -3,9 +3,8 @@ package cmd
 import (
 	"errors"
 	"io/fs"
-	"os"
-
 	s "log/slog"
+	"os"
 
 	"github.com/dark0dave/wpm/pkg/config"
 	"github.com/dark0dave/wpm/pkg/manifest"
@@ -66,7 +65,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&manifestName, "manifest", "m", "New Manifest", "name for manifest")
 	rootCmd.PersistentFlags().StringVarP(&manifestVersion, "x", "x", "1.0.0", "manifest version")
 
-	rootCmd.AddCommand(installCmd)
+	rootCmd.AddCommand(downloadCmd)
 	rootCmd.AddCommand(addCmd)
 	rootCmd.AddCommand(rmCmd)
 	rootCmd.AddCommand(versionCmd)

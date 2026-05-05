@@ -1,0 +1,49 @@
+amends "package://github.com/jdx/hk/releases/download/v1.44.2/hk@1.44.2#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.44.2/hk@1.44.2#/Builtins.pkl"
+
+local message = new Mapping<String, Step> {
+  ["check-conventional-commit"] = Builtins.check_conventional_commit
+}
+
+local builtins = new Mapping<String, Step> {
+  ["check-added-large-files"] = Builtins.check_added_large_files
+  ["check-case-conflict"] = Builtins.check_case_conflict
+  ["check-merge-conflict"] = Builtins.check_merge_conflict
+  ["end-of-file-fixer"] = Builtins.newlines
+  ["go-fmt"] = Builtins.go_fmt
+  // ["golangci-lint"] = Builtins.golangci_lint
+  ["gomod-tidy"] = Builtins.gomod_tidy
+  ["trailing-whitespace"] = Builtins.trailing_whitespace
+  ["yamlfmt"] = Builtins.yamlfmt
+}
+
+local local_hooks = new Mapping<String, Step> {
+  ["codespell"] {
+    glob = List("**/*.rs", "readme.md")
+    exclude = List("target/**", "fixtures/**", "hk.pkl")
+    check = "codespell -c {{files}}"
+    fix = "codespell -cw {{files}}"
+  }
+  ["go build"] {
+    check = "go build -o . ."
+  }
+  ["nix fmt"] {
+    fix = "nixfmt flake.nix"
+  }
+}
+
+hooks {
+  ["commit-msg"] {
+    steps {
+      ...message
+    }
+  }
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps {
+      ...builtins
+      ...local_hooks
+    }
+  }
+}

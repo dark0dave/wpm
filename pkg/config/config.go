@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
@@ -16,9 +15,7 @@ const (
 	DefaultConfigFile = "config.yaml"
 )
 
-type Config struct {
-	*dropbox.Config
-}
+type Config struct{}
 
 func resolveConfigFilePath() (string, error) {
 	configPath := os.Getenv("XDG_CONFIG_HOME")
