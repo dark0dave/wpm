@@ -12,7 +12,6 @@ local builtins = new Mapping<String, Step> {
   ["end-of-file-fixer"] = Builtins.newlines
   ["go-fmt"] = Builtins.go_fmt
   // ["golangci-lint"] = Builtins.golangci_lint
-  ["gomod-tidy"] = Builtins.gomod_tidy
   ["trailing-whitespace"] = Builtins.trailing_whitespace
   ["yamlfmt"] = Builtins.yamlfmt
 }
@@ -24,8 +23,8 @@ local local_hooks = new Mapping<String, Step> {
     check = "codespell -c {{files}}"
     fix = "codespell -cw {{files}}"
   }
-  ["go build"] {
-    check = "go build -o . ."
+  ["go mod tidy"] {
+    fix = "go mod tidy"
   }
   ["nix fmt"] {
     fix = "nixfmt flake.nix"
