@@ -18,6 +18,7 @@ jobs:
           nix: true
           primary-key: ${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock') }}
           purge: false
+          restore-prefixes-first-match: ${{ runner.os }}-
           save: true
       - name: pre-commit
         shell: 'nix develop -c bash -e {0}'
@@ -25,7 +26,9 @@ jobs:
       - uses: nix-community/cache-nix-action/save@v7
         with:
           backend: actions
+          gc-max-store-size-linux: 5G
           nix: true
           primary-key: ${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock') }}
+          purge: false
           restore-prefixes-first-match: ${{ runner.os }}-
           save: true
