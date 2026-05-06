@@ -14,6 +14,7 @@ local builtins = new Mapping<String, Step> {
   // ["golangci-lint"] = Builtins.golangci_lint
   ["trailing-whitespace"] = Builtins.trailing_whitespace
   ["yamlfmt"] = Builtins.yamlfmt
+  ["gomod-tidy"] = Builtins.gomod_tidy
 }
 
 local local_hooks = new Mapping<String, Step> {
@@ -22,9 +23,6 @@ local local_hooks = new Mapping<String, Step> {
     exclude = List("target/**", "fixtures/**", "hk.pkl")
     check = "codespell -c {{files}}"
     fix = "codespell -cw {{files}}"
-  }
-  ["go mod tidy"] {
-    fix = "go mod tidy"
   }
   ["nix fmt"] {
     fix = "nixfmt flake.nix"
