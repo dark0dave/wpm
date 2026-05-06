@@ -1,5 +1,9 @@
 package manifest
 
+import "fmt"
+
+var ErrDependencyAlreadyExists = fmt.Errorf("git dependency already exists")
+
 type DependencyProps interface {
 	Download(folderPath string) error
 }
