@@ -7,9 +7,9 @@ import (
 )
 
 type Manifest struct {
+	Dependencies map[string]Dependency `yaml:"dependencies"`
 	Name         string                `yaml:"name"`
 	Version      string                `yaml:"version"`
-	Dependencies map[string]Dependency `yaml:"dependencies"`
 }
 
 func LoadManifestFile(path string) (*Manifest, error) {
