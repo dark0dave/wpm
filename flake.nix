@@ -1,9 +1,16 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    hk = {
+      url = "github:jdx/hk/v1.44.2";
+    };
   };
   outputs =
-    { self, nixpkgs }:
+    {
+      self,
+      nixpkgs,
+      hk,
+    }:
     let
       systems = [
         "x86_64-linux"
@@ -17,13 +24,6 @@
         system:
         let
           pkgs = import nixpkgs { inherit system; };
-          remote = pkgs.fetchFromGitHub {
-            owner = "jdx";
-            repo = "hk";
-            rev = "refs/tags/v1.44.2";
-            hash = "sha256-PJ8RaUeHfOVWl9wwQo5sYbuo8kap8DhtcunI6XosBCg=";
-          };
-          hk = pkgs.callPackage (remote + "/default.nix") { };
         in
         {
           default =
@@ -36,7 +36,7 @@
                 golangci-lint
                 gopls
                 gotools
-                hk
+                hk.packages.${system}.default
                 nixfmt
                 pre-commit
                 yamlfmt
@@ -55,5 +55,6 @@
             };
         }
       );
+      formatter = forEachSystem (system: nixpkgs.${system}.nixfmt);
     };
 }

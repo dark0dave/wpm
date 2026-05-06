@@ -1,6 +1,10 @@
 name: main
 on:
+  pull_request:
   push:
+    branches:
+      - 'main'
+    tags:
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
