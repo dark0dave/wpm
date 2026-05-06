@@ -1,6 +1,7 @@
 name: main
 on:
   push:
+  pull_request:
   merge_group:
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}

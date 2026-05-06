@@ -15,7 +15,7 @@ jobs:
         uses: nix-community/cache-nix-action@v7
         with:
           backend: actions
-          gc-max-store-size-linux: 1G
+          gc-max-store-size-linux: 5G
           nix: true
           primary-key: nix-${{ runner.os }}-pre-${{ hashFiles('flake.nix', 'flake.lock') }}
           restore-prefixes-first-match: nix-${{ runner.os }}-
