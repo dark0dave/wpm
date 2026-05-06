@@ -1,7 +1,6 @@
 name: precommit
 on:
   pull_request:
-  merge_group:
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
