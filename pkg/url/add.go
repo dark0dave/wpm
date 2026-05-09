@@ -12,7 +12,7 @@ func Add(m *manifest.Manifest, path, name, version, url string) error {
 	if _, ok := m.Dependencies[name]; ok {
 		return fmt.Errorf("Git dependency already exists: %+v", dependency)
 	}
-	m.Dependencies[name] = *dependency.Dependency
+	m.Dependencies[name] = dependency.Dependency
 	if err := m.Write(path); err != nil {
 		slog.Error("Failed to write to config", slog.Any("error", err))
 		return err

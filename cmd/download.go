@@ -24,7 +24,7 @@ from wpm.yaml file to the weidu_modules folder`,
 			for _, dep := range m.Dependencies {
 				log.Debug("Dependency", log.Any("dependency", dep))
 				wg.Go(func() error {
-					if err := download(&dep, FolderPath); err != nil {
+					if err := download(dep, FolderPath); err != nil {
 						log.Error("Failed to download", log.Any("error", err))
 						return err
 					}

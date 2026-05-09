@@ -37,6 +37,7 @@
                 gopls
                 gotools
                 hk.packages.${system}.default
+                musl
                 nixfmt
                 pre-commit
                 yamlfmt
@@ -52,6 +53,10 @@
               '';
               env.HK_PKL_BACKEND = "pklr";
               env.CGO_ENABLED = 0;
+              ldflags = [
+                "-linkmode external"
+                "-extldflags '-static -L${musl}/lib'"
+              ];
             };
         }
       );
