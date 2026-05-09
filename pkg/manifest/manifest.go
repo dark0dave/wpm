@@ -7,9 +7,9 @@ import (
 )
 
 type Manifest struct {
-	Dependencies map[string]Dependency `yaml:"dependencies"`
-	Name         string                `yaml:"name"`
-	Version      string                `yaml:"version"`
+	Dependencies map[string]*Dependency `yaml:"dependencies"`
+	Name         string                 `yaml:"name"`
+	Version      string                 `yaml:"version"`
 }
 
 func LoadManifestFile(path string) (*Manifest, error) {
@@ -22,7 +22,7 @@ func LoadManifestFile(path string) (*Manifest, error) {
 		return nil, err
 	}
 	if m.Dependencies == nil {
-		m.Dependencies = make(map[string]Dependency)
+		m.Dependencies = make(map[string]*Dependency)
 	}
 	return m, nil
 }

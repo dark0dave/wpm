@@ -40,9 +40,7 @@ func initConfig() {
 	m, err = manifest.LoadManifestFile(path)
 	if errors.Is(err, fs.ErrNotExist) {
 		m = &manifest.Manifest{
-			Name:         manifestName,
-			Version:      manifestVersion,
-			Dependencies: make(map[string]manifest.Dependency),
+			Dependencies: make(map[string]*manifest.Dependency),
 		}
 		return
 	}
@@ -50,25 +48,15 @@ func initConfig() {
 		slog.Error("Failed to parse config file, either wpm.yaml does not exist or fails to conform to expected structure", "error", err)
 		cobra.CheckErr(err)
 	}
-	if m.Name == "" {
-		slog.Warn("Name of log empty", "path", path)
-	}
-	if m.Version == "" {
-		slog.Warn("Version of log empty")
-	}
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
 	rootCmd.PersistentFlags().StringVarP(&path, "path", "p", "wpm.yaml", "path to manifest")
 	rootCmd.PersistentFlags().StringVarP(&manifestName, "manifest", "m", "New Manifest", "name for manifest")
 	rootCmd.PersistentFlags().StringVarP(&manifestVersion, "x", "x", "1.0.0", "manifest version")
 
-	rootCmd.AddCommand(downloadCmd)
-	rootCmd.AddCommand(addCmd)
-	rootCmd.AddCommand(rmCmd)
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(downloadCmd, addCmd, rmCmd, versionCmd)
 }
 
 func Execute() {

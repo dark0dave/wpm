@@ -13,7 +13,7 @@ func Add(m *manifest.Manifest, path, name, ref, url string) error {
 	}
 	dependency := New(name, ref, url)
 
-	m.Dependencies[name] = *dependency.Dependency
+	m.Dependencies[name] = dependency.Dependency
 	slog.Debug("Added git dependency", slog.Any("dependency", dependency))
 	if err := m.Write(path); err != nil {
 		slog.Error("Failed to write to config", slog.Any("error", err))
