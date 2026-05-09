@@ -33,12 +33,15 @@ func (u *Dependency) Download(folderPath string) (err error) {
 	defer res.Body.Close()
 
 	mtype, err := mimetype.DetectReader(res.Body)
+	if err != nil {
+		return err
+	}
 	if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
 		return err
 	}
 
-	file_path := filepath.Join(folderPath, u.Name+mtype.Extension())
-	out, err := os.Create(file_path)
+	filePath := filepath.Join(folderPath, u.Name+mtype.Extension())
+	out, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
