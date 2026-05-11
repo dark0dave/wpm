@@ -1,5 +1,11 @@
 package manifest
 
+import (
+	"errors"
+)
+
+var ErrDependencyAlreadyExists = errors.New("git dependency already exists")
+
 type DependencyProps interface {
 	Download(folderPath string) error
 }

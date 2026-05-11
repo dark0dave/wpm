@@ -10,7 +10,7 @@ import (
 func Add(m *manifest.Manifest, path, name, version, url string) error {
 	dependency := New(name, version, url)
 	if _, ok := m.Dependencies[name]; ok {
-		return fmt.Errorf("Git dependency already exists: %+v", dependency)
+		return fmt.Errorf("%w: %+v", manifest.ErrDependencyAlreadyExists, dependency)
 	}
 	m.Dependencies[name] = dependency.Dependency
 	if err := m.Write(path); err != nil {
