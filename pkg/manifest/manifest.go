@@ -10,6 +10,7 @@ type Manifest struct {
 	Dependencies map[string]*Dependency `yaml:"dependencies"`
 	Name         string                 `yaml:"name"`
 	Version      string                 `yaml:"version"`
+	InstallOrder *[]*WeiduComponent     `yaml:"install_order"`
 }
 
 func LoadManifestFile(path string) (*Manifest, error) {

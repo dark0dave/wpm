@@ -56,7 +56,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&manifestName, "manifest", "m", "New Manifest", "name for manifest")
 	rootCmd.PersistentFlags().StringVarP(&manifestVersion, "x", "x", "1.0.0", "manifest version")
 
-	rootCmd.AddCommand(downloadCmd, addCmd, rmCmd, versionCmd)
+	rootCmd.AddCommand(downloadCmd, addCmd, rmCmd, versionCmd, logCmd())
 }
 
 func Execute() {
