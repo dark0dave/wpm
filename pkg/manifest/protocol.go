@@ -8,12 +8,10 @@ const (
 	Github
 )
 
-var (
-	protocolName = map[Protocol]string{
-		Git: "Git",
-		Url: "Url",
-	}
-)
+var protocolName = map[Protocol]string{
+	Git: "Git",
+	Url: "Url",
+}
 
 func (p Protocol) String() string {
 	return protocolName[p]
