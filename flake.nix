@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     hk = {
-      url = "github:jdx/hk/v1.44.2";
+      url = "github:jdx/hk/v1.45.0";
     };
   };
   outputs =
@@ -15,6 +15,7 @@
       systems = [
         "x86_64-linux"
         "aarch64-linux"
+        "x86_64-darwin"
         "aarch64-darwin"
       ];
       forEachSystem = f: nixpkgs.lib.genAttrs systems (system: f system);
