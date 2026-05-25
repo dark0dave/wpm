@@ -18,7 +18,7 @@ func New(name, ref, url string) *Dependency {
 	return &Dependency{
 		Dependency: &manifest.Dependency{
 			Name:     name,
-			Url:      url,
+			URL:      url,
 			Version:  plumbing.ReferenceName(ref).String(),
 			Protocol: manifest.Git,
 		},
@@ -28,7 +28,7 @@ func New(name, ref, url string) *Dependency {
 func (g *Dependency) Download(folderPath string) error {
 	path := filepath.Join(folderPath, g.Name)
 	_, err := git.PlainClone(path, true, &git.CloneOptions{
-		URL:           g.Url,
+		URL:           g.URL,
 		Progress:      os.Stdout,
 		ReferenceName: plumbing.ReferenceName(g.Version),
 		SingleBranch:  true,

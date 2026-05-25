@@ -9,7 +9,7 @@ var rmCmd = &cobra.Command{
 	Aliases: []string{"r", "rm"},
 	Short:   "Removes dependencies",
 	Long:    `Remove dependencies to a manifest file`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		return cmd.Help()
 	},
 }

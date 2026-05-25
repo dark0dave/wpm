@@ -2,15 +2,14 @@ package manifest
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"testing"
 )
 
 func TestParsing(t *testing.T) {
 	testCases := []struct {
-		input    *WeiduComponent
-		expected string
+		input          *WeiduComponent
+		name, expected string
 	}{
 		{
 			input: &WeiduComponent{
@@ -25,9 +24,11 @@ func TestParsing(t *testing.T) {
 		},
 	}
 	for _, tc := range testCases {
-		result := tc.input.ToLogString()
-		if result != tc.expected {
-			log.Fatalf("%s != %s", result, tc.expected)
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			result := tc.input.ToLogString()
+			if result != tc.expected {
+				t.Fatalf("%s != %s", result, tc.expected)
+			}
+		})
 	}
 }

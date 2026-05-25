@@ -6,7 +6,6 @@ import (
 	s "log/slog"
 	"os"
 
-	"github.com/dark0dave/wpm/pkg/config"
 	"github.com/dark0dave/wpm/pkg/manifest"
 	"github.com/dark0dave/wpm/pkg/util"
 	"github.com/spf13/cobra"
@@ -19,24 +18,20 @@ const (
 
 var (
 	slog                                = s.New(s.NewJSONHandler(os.Stdout, nil))
-	c                                   *config.Config
 	m                                   *manifest.Manifest
 	path, manifestName, manifestVersion string
 	rootCmd                             = &cobra.Command{
 		Use:   "wpm",
 		Short: "wpm is a weidu package manager",
 		Long:  `A Fast and Flexible Package Manager, designed to help wiedu modders share code.`,
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
+		RunE: func(cmd *cobra.Command, _ []string) (err error) {
 			return cmd.Help()
 		},
 	}
 )
 
 func initConfig() {
-	err := config.InitViper(slog)
-	cobra.CheckErr(err)
-	c, err = config.Load()
-	cobra.CheckErr(err)
+	var err error
 	m, err = manifest.LoadManifestFile(path)
 	if errors.Is(err, fs.ErrNotExist) {
 		m = &manifest.Manifest{
@@ -62,7 +57,7 @@ func init() {
 func Execute() {
 	util.AddColor(rootCmd)
 	if err := rootCmd.Execute(); err != nil {
-		slog.Error("Failed", "error", err)
+		slog.Error("Failed", s.Any("error", err))
 		os.Exit(1)
 	}
 }

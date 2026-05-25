@@ -56,7 +56,7 @@ var versionCmd = &cobra.Command{
 	Aliases: []string{"v"},
 	Short:   "Version info",
 	Long:    `Detailed information about the version`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(_ *cobra.Command, _ []string) error {
 		msg, err := infoMessage()
 		if err != nil {
 			slog.Error("Failed to print message", s.Any("error", err))
