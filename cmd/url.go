@@ -14,11 +14,20 @@ func urlAddCmd() *cobra.Command {
 		Aliases: []string{"u"},
 		Short:   "Add url dependencies",
 		Long:    `Add url dependencies to a manifest file`,
-		PreRunE: func(cmd *cobra.Command, args []string) (err error) {
-			_, err = u.Parse(urlString)
+		PreRunE: func(cmd *cobra.Command, _ []string) error {
+			if err := cmd.MarkFlagRequired("name"); err != nil {
+				return err
+			}
+			if err := cmd.MarkFlagRequired("url"); err != nil {
+				return err
+			}
+			if err := cmd.MarkFlagRequired("version"); err != nil {
+				return err
+			}
+			_, err := u.Parse(urlString)
 			return err
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return url.Add(m, path, name, version, urlString)
 		},
 	}
@@ -26,9 +35,6 @@ func urlAddCmd() *cobra.Command {
 	cmd.Flags().StringVar(&name, "name", "n", "")
 	cmd.Flags().StringVar(&urlString, "url", "u", "")
 	cmd.Flags().StringVar(&version, "version", "v", "")
-	cmd.MarkFlagRequired("name")
-	cmd.MarkFlagRequired("url")
-	cmd.MarkFlagRequired("version")
 
 	return cmd
 }
@@ -40,13 +46,15 @@ func urlRemoveCmd() *cobra.Command {
 		Aliases: []string{"u"},
 		Short:   "Remove url dependencies",
 		Long:    `Remove url dependencies to a manifest file`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		PreRunE: func(cmd *cobra.Command, _ []string) error {
+			return cmd.MarkFlagRequired("name")
+		},
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return url.Remove(m, path, name)
 		},
 	}
 
 	cmd.Flags().StringVar(&name, "name", "n", "")
-	cmd.MarkFlagRequired("name")
 
 	return cmd
 }

@@ -9,7 +9,7 @@ var addCmd = &cobra.Command{
 	Aliases: []string{"a"},
 	Short:   "Add dependencies",
 	Long:    `Add dependencies to a manifest file`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		return cmd.Help()
 	},
 }

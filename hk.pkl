@@ -11,7 +11,7 @@ local builtins = new Mapping<String, Step> {
   ["check-merge-conflict"] = Builtins.check_merge_conflict
   ["end-of-file-fixer"] = Builtins.newlines
   ["go-fmt"] = Builtins.go_fmt
-  // ["golangci-lint"] = Builtins.golangci_lint
+  ["golangci-lint"] = Builtins.golangci_lint
   ["trailing-whitespace"] = Builtins.trailing_whitespace
   ["yamlfmt"] = Builtins.yamlfmt
 }

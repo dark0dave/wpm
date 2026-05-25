@@ -26,7 +26,7 @@ func resolveConfigFilePath() (string, error) {
 		}
 		configPath = filepath.Join(home, ".config")
 	}
-	configPath = filepath.Join(configPath, "wpm")
+	configPath = filepath.Join(filepath.Clean(configPath), "wpm")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		if err := os.MkdirAll(configPath, os.ModePerm); err != nil {
 			return "", err

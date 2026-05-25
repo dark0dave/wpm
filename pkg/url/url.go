@@ -19,33 +19,36 @@ func New(name, version, url string) *Dependency {
 	return &Dependency{
 		Dependency: &manifest.Dependency{
 			Name:     name,
-			Url:      url,
+			URL:      url,
 			Version:  version,
-			Protocol: manifest.Url,
+			Protocol: manifest.URL,
 		},
 	}
 }
 
-func (u *Dependency) Download(folderPath string) (err error) {
-	res, err := http.Get(u.Url)
+func (u *Dependency) Download(folderPath string) error {
+	res, err := http.Get(u.URL)
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
 
 	mtype, err := mimetype.DetectReader(res.Body)
-	if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(folderPath, os.ModePerm); err != nil { //nolint:govet
 		return err
 	}
 
-	file_path := filepath.Join(folderPath, u.Name+mtype.Extension())
-	out, err := os.Create(file_path)
+	filePath := filepath.Join(folderPath, u.Name+mtype.Extension())
+	out, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
 	defer out.Close()
 
-	if _, err = io.Copy(out, res.Body); err != nil {
+	if _, err := io.Copy(out, res.Body); err != nil {
 		return err
 	}
 	return nil

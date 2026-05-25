@@ -15,7 +15,7 @@ var (
 		Short:   "Download all the dependencies from your project file (wpm.yaml)",
 		Long: `Download all the dependencies in your project
 from wpm.yaml file to the weidu_modules folder`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			for _, dep := range m.Dependencies {
 				log.Debug("Dependency", log.Any("dependency", dep))
 				wg.Go(func() error {
