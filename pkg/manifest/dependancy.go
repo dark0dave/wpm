@@ -2,6 +2,7 @@ package manifest
 
 type DependencyProps interface {
 	Download(folderPath string) error
+	CheckSum(folderPath string) error
 }
 
 type Dependency struct {

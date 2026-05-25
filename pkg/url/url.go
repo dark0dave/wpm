@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/dark0dave/wpm/pkg/manifest"
+	"github.com/dark0dave/wpm/pkg/util"
 	"github.com/gabriel-vasile/mimetype"
 )
 
@@ -47,5 +48,14 @@ func (u *Dependency) Download(folderPath string) (err error) {
 	if _, err = io.Copy(out, res.Body); err != nil {
 		return err
 	}
+	return nil
+}
+
+func (u *Dependency) CheckSum(folderPath string) error {
+	checksum, err := util.CheckSum(folderPath)
+	if err != nil {
+		return err
+	}
+	u.Dependency.CheckSum = checksum
 	return nil
 }
