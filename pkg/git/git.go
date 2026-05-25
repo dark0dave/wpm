@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/dark0dave/wpm/pkg/manifest"
+	"github.com/dark0dave/wpm/pkg/util"
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 )
@@ -35,4 +36,13 @@ func (g *Dependency) Download(folderPath string) error {
 		Tags:          3,
 	})
 	return err
+}
+
+func (g *Dependency) CheckSum(folderPath string) error {
+	checksum, err := util.CheckSum(folderPath)
+	if err != nil {
+		return err
+	}
+	g.Dependency.CheckSum = checksum
+	return nil
 }

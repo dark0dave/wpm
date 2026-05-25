@@ -40,7 +40,7 @@ func initConfig() {
 	m, err = manifest.LoadManifestFile(path)
 	if errors.Is(err, fs.ErrNotExist) {
 		m = &manifest.Manifest{
-			Dependencies: make(map[string]*manifest.Dependency),
+			Dependencies: make(map[string]manifest.DependencyProps),
 		}
 		return
 	}
