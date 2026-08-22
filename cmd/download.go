@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	wg            errgroup.Group
-	errorProtocol = errors.New("invalid protocol")
-	downloadCmd   = &cobra.Command{
+	wg          errgroup.Group
+	ErrProtocol = errors.New("invalid protocol")
+	downloadCmd = &cobra.Command{
 		Use:     "download",
 		Aliases: []string{"d"},
 		Short:   "Download all the dependencies from your project file (wpm.yaml)",
@@ -28,7 +28,7 @@ from wpm.yaml file to the weidu_modules folder`,
 				case manifest.URL:
 					download(&url.Dependency{Dependency: &dep})
 				default:
-					return errorProtocol
+					return ErrProtocol
 				}
 			}
 			return wg.Wait()
