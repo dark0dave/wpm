@@ -14,5 +14,8 @@ var protocolName = map[Protocol]string{
 }
 
 func (p Protocol) String() string {
-	return protocolName[p]
+	if proto, ok := protocolName[p]; ok {
+		return proto
+	}
+	return ""
 }

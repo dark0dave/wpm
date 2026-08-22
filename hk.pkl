@@ -12,7 +12,9 @@ local builtins = new Mapping<String, Step> {
   ["end-of-file-fixer"] = Builtins.newlines
   ["go-fmt"] = Builtins.go_fmt
   ["go-vet"] = Builtins.go_vet
-  ["golangci-lint"] = Builtins.golangci_lint
+  ["golangci-lint"] = (Builtins.golangci_lint) {
+    exclude = List("./.go/*")
+  }
   ["nix-fmt"] = Builtins.nix_fmt
   ["trailing-whitespace"] = Builtins.trailing_whitespace
   ["yamlfmt"] = Builtins.yamlfmt
