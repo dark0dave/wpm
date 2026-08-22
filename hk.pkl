@@ -1,5 +1,5 @@
-amends "package://github.com/jdx/hk/releases/download/v1.45.0/hk@1.45.0#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.45.0/hk@1.45.0#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.55.0/hk@1.55.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.55.0/hk@1.55.0#/Builtins.pkl"
 
 local message = new Mapping<String, Step> {
   ["check-conventional-commit"] = Builtins.check_conventional_commit
@@ -11,7 +11,9 @@ local builtins = new Mapping<String, Step> {
   ["check-merge-conflict"] = Builtins.check_merge_conflict
   ["end-of-file-fixer"] = Builtins.newlines
   ["go-fmt"] = Builtins.go_fmt
+  ["go-vet"] = Builtins.go_vet
   ["golangci-lint"] = Builtins.golangci_lint
+  ["nix-fmt"] = Builtins.nix_fmt
   ["trailing-whitespace"] = Builtins.trailing_whitespace
   ["yamlfmt"] = Builtins.yamlfmt
 }
@@ -22,12 +24,6 @@ local local_hooks = new Mapping<String, Step> {
     exclude = List("target/**", "fixtures/**", "hk.pkl")
     check = "codespell -c {{files}}"
     fix = "codespell -cw {{files}}"
-  }
-  ["go mod tidy"] {
-    fix = "go mod tidy"
-  }
-  ["nix fmt"] {
-    fix = "nixfmt flake.nix"
   }
 }
 
