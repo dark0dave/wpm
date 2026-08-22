@@ -1,40 +1,55 @@
 package cmd
 
 import (
+	"errors"
 	u "net/url"
+	"strings"
 
 	"github.com/dark0dave/wpm/pkg/git"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/spf13/cobra"
 )
 
+var ErrorName = errors.New("could not construct a name for the mod, try again with --name")
+
 func gitAddCmd() *cobra.Command {
 	var name, url, ref string
+	var version plumbing.ReferenceName
 	cmd := &cobra.Command{
 		Use:     "git",
 		Aliases: []string{"g"},
 		Short:   "Add git dependencies",
 		Long:    `Add git dependencies to a manifest file`,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
-			if err := cmd.MarkFlagRequired("name"); err != nil {
-				return err
+			version = plumbing.ReferenceName(ref)
+			if err := version.Validate(); err != nil {
+				version = plumbing.HEAD
+				slog.Debug("defaulting to head")
 			}
 			if err := cmd.MarkFlagRequired("url"); err != nil {
 				return err
 			}
-			if err := cmd.MarkFlagRequired("ref"); err != nil {
+			u, err := u.Parse(url)
+			if err != nil {
 				return err
 			}
-			_, err := u.Parse(url)
-			return err
+			if name != "" {
+				return nil
+			}
+			if p := strings.Split(u.Path, "/"); len(p) > 2 {
+				name = strings.ToLower(p[2])
+				return nil
+			}
+			return ErrorName
 		},
 		RunE: func(_ *cobra.Command, _ []string) error {
-			return git.Add(m, path, name, ref, url)
+			return git.Add(m, path, name, version.Short(), url)
 		},
 	}
 
-	cmd.Flags().StringVar(&name, "name", "n", "")
-	cmd.Flags().StringVar(&ref, "ref", "r", "")
-	cmd.Flags().StringVar(&url, "url", "u", "")
+	cmd.Flags().StringVar(&name, "name", "", "")
+	cmd.Flags().StringVar(&ref, "ref", "", "")
+	cmd.Flags().StringVar(&url, "url", "", "")
 
 	return cmd
 }

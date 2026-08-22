@@ -14,13 +14,13 @@ type Dependency struct {
 	*manifest.Dependency
 }
 
-func New(name, ref, url string) *Dependency {
+func New(name, version, url string) *Dependency {
 	return &Dependency{
 		Dependency: &manifest.Dependency{
 			Name:     name,
 			URL:      url,
-			Version:  plumbing.ReferenceName(ref).String(),
-			Protocol: manifest.Git,
+			Version:  version,
+			Protocol: manifest.Git.String(),
 		},
 	}
 }

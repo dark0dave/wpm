@@ -19,3 +19,12 @@ func (p Protocol) String() string {
 	}
 	return ""
 }
+
+func Parse(p string) Protocol {
+	for proto, name := range protocolName {
+		if p == name {
+			return proto
+		}
+	}
+	return -1
+}
