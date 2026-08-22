@@ -21,7 +21,7 @@ func New(name, version, url string) *Dependency {
 			Name:     name,
 			URL:      url,
 			Version:  version,
-			Protocol: manifest.URL,
+			Protocol: manifest.URL.String(),
 		},
 	}
 }

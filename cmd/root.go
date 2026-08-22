@@ -14,6 +14,8 @@ import (
 const (
 	ManifestFileName string = "wpm"
 	FolderPath       string = "weidu_modules"
+	DefaultVersion   string = "1.0.0"
+	DefaultName      string = "new"
 )
 
 var (
@@ -24,6 +26,15 @@ var (
 		Use:   "wpm",
 		Short: "wpm is a weidu package manager",
 		Long:  `A Fast and Flexible Package Manager, designed to help wiedu modders share code.`,
+		PersistentPreRunE: func(_ *cobra.Command, _ []string) error {
+			if m.Version == "" || manifestVersion != DefaultVersion {
+				m.Version = manifestVersion
+			}
+			if m.Name == "" || manifestVersion != DefaultName {
+				m.Name = manifestName
+			}
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, _ []string) (err error) {
 			return cmd.Help()
 		},
@@ -35,7 +46,7 @@ func initConfig() {
 	m, err = manifest.LoadManifestFile(path)
 	if errors.Is(err, fs.ErrNotExist) {
 		m = &manifest.Manifest{
-			Dependencies: make(map[string]manifest.DependencyProps),
+			Dependencies: make(map[string]manifest.Dependency),
 		}
 		return
 	}
@@ -48,8 +59,8 @@ func initConfig() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&path, "path", "p", "wpm.yaml", "path to manifest")
-	rootCmd.PersistentFlags().StringVarP(&manifestName, "manifest", "m", "New Manifest", "name for manifest")
-	rootCmd.PersistentFlags().StringVarP(&manifestVersion, "x", "x", "1.0.0", "manifest version")
+	rootCmd.PersistentFlags().StringVarP(&manifestName, "manifest", "m", DefaultName, "name for manifest")
+	rootCmd.PersistentFlags().StringVarP(&manifestVersion, "x", "x", DefaultVersion, "manifest version")
 
 	rootCmd.AddCommand(downloadCmd, addCmd, rmCmd, versionCmd, logCmd())
 }

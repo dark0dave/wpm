@@ -22,7 +22,7 @@
         {
           default =
             with pkgs;
-            mkShell rec {
+            mkShell {
               nativeBuildInputs = [
                 codespell
                 delve
@@ -37,7 +37,7 @@
                 pre-commit
                 yamlfmt
               ];
-              buildInputs = with pkgs; [
+              buildInputs = [
                 go
                 openssl
               ];
