@@ -2,3 +2,4 @@
 set -a
 
 use flake
+mkdir -p "${TMPDIR}" 2>/dev/null || true

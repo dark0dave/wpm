@@ -9,23 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - uses: nixbuild/nix-quick-install-action@v34
-      - name: cache
-        uses: nix-community/cache-nix-action/restore@v7
+      - uses: nixbuild/nix-quick-install-action@master
+      - name: nixcache
+        uses: nix-community/cache-nix-action@main
         with:
-          backend: actions
-          nix: true
-          primary-key: ${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock') }}
-          restore-prefixes-first-match: ${{ runner.os }}-
-          save: true
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 5G
       - name: pre-commit
         shell: 'nix develop -c bash -e {0}'
-        run: hk run pre-commit --all -j 10
-      - uses: nix-community/cache-nix-action/save@v7
-        with:
-          backend: actions
-          gc-max-store-size-linux: 5G
-          nix: true
-          primary-key: ${{ runner.os }}-${{ hashFiles('flake.nix', 'flake.lock') }}
-          purge: false
-          save: true
+        run: env HK_FIX=0 hk run pre-commit --all --no-fail-fast --stash none

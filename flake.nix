@@ -1,21 +1,14 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
-    hk = {
-      url = "github:jdx/hk/v1.45.0";
-    };
   };
+
   outputs =
-    {
-      self,
-      nixpkgs,
-      hk,
-    }:
+    { self, nixpkgs }:
     let
       systems = [
         "x86_64-linux"
         "aarch64-linux"
-        "x86_64-darwin"
         "aarch64-darwin"
       ];
       forEachSystem = f: nixpkgs.lib.genAttrs systems (system: f system);
@@ -30,15 +23,16 @@
           default =
             with pkgs;
             mkShell rec {
-              nativeBuildInputs = with pkgs; [
+              nativeBuildInputs = [
                 codespell
                 delve
                 git
                 golangci-lint
                 gopls
                 gotools
-                hk.packages.${system}.default
+                hk
                 musl
+                nil
                 nixfmt
                 pre-commit
                 yamlfmt
@@ -52,7 +46,6 @@
                 export PATH="$GOPATH/bin:$PATH"
                 mkdir -p .go/bin
               '';
-              env.HK_PKL_BACKEND = "pklr";
               env.CGO_ENABLED = 0;
               ldflags = [
                 "-linkmode external"
@@ -61,6 +54,6 @@
             };
         }
       );
-      formatter = forEachSystem (system: nixpkgs.${system}.nixfmt);
+      formatter = forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
     };
 }
