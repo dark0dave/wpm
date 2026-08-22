@@ -1,18 +1,14 @@
+# yaml-language-server: $schema=https://golangci-lint.run/jsonschema/golangci.jsonschema.json
+version: "2"
 formatters:
   enable:
     - gci
     - gofumpt
-  exclusions:
-    paths:
-      - third_party
   settings:
     gci:
       sections:
         - standard
         - default
-    gofumpt:
-      # Choose whether to use the extra rules.
-      extra-rules: true
 issues:
   # Maximum issues count per one linter.
   max-issues-per-linter: 0
@@ -46,82 +42,11 @@ linters:
     - wastedassign
     - whitespace
   exclusions:
-    # which dirs to skip: issues from them won't be reported;
-    # can use regexp here: generated.*, regexp is applied on full path;
-    # default value is empty list, but default dirs are skipped independently
-    # from this option's value (see exclude-dirs-use-default).
-    paths:
-      - third_party
     presets:
       - comments
       - common-false-positives
       - legacy
       - std-error-handling
-    # Excluding configuration per-path, per-linter, per-text and per-source
-    rules:
-      - linters:
-          - unused
-        path: pagefile.go # This exclusion is required for Windows only
-        text: cachedBytes
-      - linters:
-          - unused
-        path: receiver/macosunifiedloggingreceiver/config_common.go
-        text: resolvedArchivePaths
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45002
-      - linters:
-          - revive
-        path: processor/transformprocessor/internal/common/
-        text: "var-naming: avoid meaningless package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45003
-      - linters:
-          - revive
-        path: internal/healthcheck/internal/common/
-        text: "var-naming: avoid meaningless package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45004
-      - linters:
-          - revive
-        path: cmd/telemetrygen/pkg/
-        text: "var-naming: avoid meaningless package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45005
-      - linters:
-          - revive
-        path: extension/encoding/googlecloudlogentryencodingextension/internal/shared/
-        text: "var-naming: avoid meaningless package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45006
-      - linters:
-          - revive
-        path: pkg/stanza/errors/
-        text: "var-naming: avoid package names that conflict with Go standard library package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45006
-      - linters:
-          - revive
-        path: pkg/stanza/internal/time/
-        text: "var-naming: avoid package names that conflict with Go standard library package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45006
-      - linters:
-          - revive
-        path: pkg/stanza/operator/parser/json/
-        text: "var-naming: avoid package names that conflict with Go standard library package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45006
-      - linters:
-          - revive
-        path: pkg/stanza/operator/parser/time/
-        text: "var-naming: avoid package names that conflict with Go standard library package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45008
-      - linters:
-          - revive
-        path: extension/jaegerremotesampling/internal/server/http/
-        text: "var-naming: avoid package names that conflict with Go standard library package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45008
-      - linters:
-          - revive
-        path: extension/sumologicextension/internal/api/
-        text: "var-naming: avoid meaningless package names"
-      # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45003
-      - linters:
-          - revive
-        path: internal/healthcheck/internal/http/
-        text: "var-naming: avoid package names that conflict with Go standard library package names"
     # Log a warning if an exclusion rule is unused.
     warn-unused: true
   # all available settings of specific linters
@@ -313,4 +238,3 @@ run:
   tests: true
   # timeout for analysis, e.g. 30s, 5m, default is 0 (no timeout)
   timeout: 30m
-version: "2"
