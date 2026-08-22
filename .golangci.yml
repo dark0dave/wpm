@@ -19,14 +19,19 @@ linters:
     - copyloopvar
     - decorder
     - depguard
+    - dupl
+    - err113
     - errcheck
+    - errname
     - errorlint
     - exhaustive
+    - fatcontext
     - gocritic
     - gosec
     - govet
     - misspell
     - modernize
+    - nestif
     - nolintlint
     - predeclared
     - reassign
@@ -77,15 +82,11 @@ linters:
     gocritic:
       disabled-checks:
         - badRegexp
-        - commentedOutCode
         - deferInLoop
         - exposedSyncMutex
         - filepathJoin
         - hugeParam
-        - importShadow
-        - ptrToRefParam
         - returnAfterHttpError
-        - todoCommentWithoutDetail
         - tooManyResultsChecker
         - unnamedResult
         - whyNoLint

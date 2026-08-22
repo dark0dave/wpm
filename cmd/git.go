@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var ErrorName = errors.New("could not construct a name for the mod, try again with --name")
+var ErrName = errors.New("could not construct a name for the mod, try again with --name")
 
 func gitAddCmd() *cobra.Command {
 	var name, url, ref string
@@ -40,7 +40,7 @@ func gitAddCmd() *cobra.Command {
 				name = strings.ToLower(p[2])
 				return nil
 			}
-			return ErrorName
+			return ErrName
 		},
 		RunE: func(_ *cobra.Command, _ []string) error {
 			return git.Add(m, path, name, version.Short(), url)

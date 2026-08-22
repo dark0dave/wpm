@@ -20,6 +20,8 @@ Go version: {{.GoVersion}}
 OS/Arch:    {{.OSArch}}
 `
 
+var ErrBuildInfo = errors.New("Could not read build info")
+
 func infoMessage() (*string, error) {
 	tmpl, err := template.New("info").Parse(templateText)
 	if err != nil {
@@ -28,7 +30,7 @@ func infoMessage() (*string, error) {
 
 	buildInfo, ok := debug.ReadBuildInfo()
 	if !ok {
-		return nil, errors.New("Could not read build info")
+		return nil, ErrBuildInfo
 	}
 
 	data := struct {

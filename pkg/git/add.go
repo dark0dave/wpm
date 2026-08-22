@@ -1,15 +1,18 @@
 package git
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 
 	"github.com/dark0dave/wpm/pkg/manifest"
 )
 
+var ErrDependencyAlreadyExists = errors.New("dependency already exists")
+
 func Add(m *manifest.Manifest, path, name, ref, url string) error {
 	if dependency, ok := m.Dependencies[name]; ok {
-		return fmt.Errorf("Git dependency already exists: %#v", dependency)
+		return fmt.Errorf("%w, %#v", ErrDependencyAlreadyExists, dependency)
 	}
 	dependency := New(name, ref, url)
 
