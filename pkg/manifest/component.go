@@ -7,21 +7,30 @@ import (
 
 // https://github.com/WeiDUorg/weidu/blob/devel/src/tp.ml#L98
 type WeiduComponent struct {
-	tpFile        string
 	name          string
-	lang          int
-	component     int
+	tpFile        string
+	lang          uint
+	component     uint
 	componentName string
 	subComponent  string
 	version       string
 	*Meta
 }
 
-func (w *WeiduComponent) ToLogString() string {
-	if w.subComponent != "" {
-		// ~DLCMERGER/DLCMERGER.TP2~ #0 #3 // Merge DLC into game -> Merge all available DLCs: 1.7
-		return fmt.Sprintf("~%s%c%s~ #%d #%d // %s -> %s: %s", w.name, os.PathSeparator, w.tpFile, w.lang, w.component, w.componentName, w.subComponent, w.version)
+func (w *WeiduComponent) ToLogString() (out string) {
+	if w.name != "" {
+		out = fmt.Sprintf("~%s%c%s~ #%d #%d", w.name, os.PathSeparator, w.tpFile, w.lang, w.component)
+	} else {
+		out = fmt.Sprintf("~%s~ #%d #%d", w.tpFile, w.lang, w.component)
 	}
-	// ~BG1UB/BG1UB.TP2~ #0 #14 // Edie, the Merchant League Applicant: v17
-	return fmt.Sprintf("~%s%c%s~ #%d #%d // %s: %s", w.name, os.PathSeparator, w.tpFile, w.lang, w.component, w.componentName, w.version)
+	if w.componentName != "" {
+		out = fmt.Sprintf("%s // %s", out, w.componentName)
+	}
+	if w.subComponent != "" {
+		out = fmt.Sprintf("%s -> %s", out, w.subComponent)
+	}
+	if w.version != "" {
+		out = fmt.Sprintf("%s: %s", out, w.version)
+	}
+	return out
 }
