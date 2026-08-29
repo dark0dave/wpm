@@ -10,7 +10,9 @@ local builtins = new Mapping<String, Step> {
   ["check-case-conflict"] = Builtins.check_case_conflict
   ["check-merge-conflict"] = Builtins.check_merge_conflict
   ["end-of-file-fixer"] = Builtins.newlines
-  ["go-fmt"] = Builtins.go_fmt
+  ["go-fmt"] = (Builtins.go_fmt) {
+    exclude = List("./.go/*")
+  }
   ["golangci-lint"] = (Builtins.golangci_lint) {
     exclude = List("./.go/*")
   }
